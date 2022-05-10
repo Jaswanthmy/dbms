@@ -1,0 +1,120 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+
+
+#include <iostream>
+using namespace std;
+#define MAX 50
+int cnt=0;
+struct Process
+{
+    char name[10];
+    int bt;
+    int at;
+};
+float findResponseRatio(Process proc[],int currentTime,int index)
+{
+    float w=currentTime-proc[index].at;
+    float s=proc[index].bt;
+    float resRatio=(w+s)/(float)s;
+    return resRatio;
+    
+}
+void gantt(int start, int end, int index, Process p[])
+{
+    cout << "|";
+    for (int i = start; i <= end; i++)
+    {
+        cout << "-";
+        cnt++;
+    }
+    cnt--;
+    cout << p[index].name << "("<<cnt<<")"<< "|";
+}
+void findavgTime(Process proc[], int n)
+{
+    int wt[n], tat[n], st[n], ct[n], rt[n],k;
+    k=n;
+    float total_wt = 0, total_tat = 0, total_rt = 0, total_ct = 0;
+    int currentTime = 0;
+    int completed = 0;
+    int is_completed[100] = {0};
+    cout << "\n\n----------Gantt chart----------\n\n";
+    while (completed != n)
+    {
+        float ResponseRatio[100]={0};
+        float max=-999999.999;
+        int min = 100000;
+        int idx = -1;
+        for (int i = 0; i < n; i++)
+        {
+            if (proc[i].at <= currentTime && is_completed[i] != 1)
+            {
+             ResponseRatio[i]=findResponseRatio(proc,currentTime,i);
+            }
+        }
+        for(int i=0;i<n;i++)
+        {
+            if(max<ResponseRatio[i])
+            {
+                max=ResponseRatio[i];
+                idx=i;
+            }
+        }
+        if (idx != -1)
+        {
+            st[idx] = currentTime;
+            currentTime += proc[idx].bt;
+            ct[idx] = currentTime;
+            tat[idx] = ct[idx] - proc[idx].at;
+            wt[idx] = tat[idx] - proc[idx].bt;
+            rt[idx] = st[idx] - proc[idx].at;
+            completed++;
+            is_completed[idx] = 1;
+            gantt(st[idx], ct[idx], idx, proc);
+        }
+        else
+        {
+            currentTime++;
+        }
+    }
+    cout<<endl;
+    printf("\nID\t\tAT\t\tBT\t\tTAT\t\tWT\t\tRT\t\tCT");
+    cout<<"\n--\t\t--\t\t--\t\t--\t\t--\t\t--\t\t--"<<endl;
+    for(int i=0;i<n;i++)
+    {
+        printf("\n%s\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t%d\n",proc[i].name,proc[i].at,proc[i].bt,tat[i],wt[i],rt[i],ct[i]);
+    }
+    for (int i = 0; i < n; i++)
+    {
+        total_wt += wt[i];
+        total_tat += tat[i];
+        total_ct += ct[i];
+        total_rt += rt[i];
+    }
+    cout << "\nAverage waiting time :" << (float)total_wt / n << endl;
+    cout << "Average turnaroundTime time :" << (float)total_tat / n << endl;
+    cout << "Average response time :" << (float)total_rt / n << endl;
+    cout << "Average completion time :" << (float)total_ct / n << endl;
+}
+
+// Driver code
+int main()
+{
+    int n;
+    cout << "Enter number of processes:";
+    cin >> n;
+    Process proc[MAX];
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Enter the process ID -> " ;
+        cin >> proc[i].name;
+        cout<<"Arrival Time: ";
+        cin >> proc[i].at;
+        cout<<"Burst Time  : ";
+        cin >> proc[i].bt;
+    }
+    findavgTime(proc,n);
+    return 0;
+}

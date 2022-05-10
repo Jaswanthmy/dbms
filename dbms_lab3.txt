@@ -1,0 +1,361 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+
+
+mysql> use 20bcs065_lab2
+
+Database changed
+mysql> create table salesman_master
+    -> (salesmanNo      varchar(6),
+    ->  salesmanName    varchar(20),
+    ->  address1        varchar(30),
+    ->  address2        varchar(30),
+    ->  city            varchar(20),
+    ->  pincode         int(8),
+    ->  state           varchar(20),
+    ->  salamt          int(8),
+    ->  Tgttoget        int(6),
+    ->  ytdsales        int(6),
+    ->  remarks         varchar(60));
+
+
+mysql> show tables;
++-------------------------+
+| Tables_in_20bcs065_lab2 |
++-------------------------+
+| client_master           |
+| product_master          |
+| salesman_master         |
++-------------------------+
+
+
+mysql> insert into salesman_master values
+    -> ('s00001','aman','A/14','worli','mumbai','400002','maharashtra','3000','100','50','Good'),
+    -> ('s00002','omkar','65','nariman','mumbai','400001','maharashtra','3000','200','100','Good'),
+    -> ('s00003','raj','P-7','bandra','mumbai','400032','maharashtra','3000','200','100','Good'),
+    -> ('s00004','ashish','A/5','juhu','mumbai','400044','maharashtra','3500','200','150','Good');
+
+
+mysql> select *from salesman_master;
++------------+--------------+----------+----------+--------+---------+-------------+--------+----------+----------+---------+
+| salesmanNo | salesmanName | address1 | address2 | city   | pincode | state       | salamt | Tgttoget | ytdsales | remarks |
++------------+--------------+----------+----------+--------+---------+-------------+--------+----------+----------+---------+
+| s00001     | aman         | A/14     | worli    | mumbai |  400002 | maharashtra |   3000 |      100 |       50 | Good    |
+| s00002     | omkar        | 65       | nariman  | mumbai |  400001 | maharashtra |   3000 |      200 |      100 | Good    |
+| s00003     | raj          | P-7      | bandra   | mumbai |  400032 | maharashtra |   3000 |      200 |      100 | Good    |
+| s00004     | ashish       | A/5      | juhu     | mumbai |  400044 | maharashtra |   3500 |      200 |      150 | Good    |
++------------+--------------+----------+----------+--------+---------+-------------+--------+----------+----------+---------+
+
+
+
+ EXERCISE : 3 (SEARCH)
+----------------
+
+
+ QUERY - F).  FIND NAMES OF SALES MAN WHO HAVE SALARY = 3000 ?
+---------------------------------------------------------------
+
+mysql> select salesmanname 
+    -> from salesman_master
+    -> where salamt='3000';
++--------------+
+| salesmanname |
++--------------+
+| aman         |
+| omkar        |
+| raj          |
++--------------+
+
+
+ EXERCISE : 4  (UPDATE)
+----------------
+
+ QUERY - D).  CHANGE THY CITY OF SALES MEN INTO PUNE ?
+---------------------------------------------------------------
+
+mysql> UPDATE salesman_master
+    -> set city='pune';
+
+BEFORE UPDATE :
+--------------
+
+mysql> select salesmanname,city
+    -> from salesman_master;
++--------------+--------+
+| salesmanname | city   |
++--------------+--------+
+| aman         | mumbai |
+| omkar        | mumbai |
+| raj          | mumbai |
+| ashish       | mumbai |
++--------------+--------+
+
+
+AFTER UPDATE :
+--------------
+
+mysql> select salesmanname,city
+    -> from salesman_master;
++--------------+------+
+| salesmanname | city |
++--------------+------+
+| aman         | pune |
+| omkar        | pune |
+| raj          | pune |
+| ashish       | pune |
++--------------+------+
+
+
+ EXERCISE : 5   (DELETE)
+----------------
+
+ QUERY - A). DELETE ALL SALESMAN IN SALESMAN_MASTER WHOSE SALARY = 3500  ?
+-------------------------------------------------------------------------
+
+mysql> DELETE FROM SALESMAN_MASTER
+    -> WHERE SALAMT='3500';
+
+
+BEFORE DELETION :
+----------------
+
+mysql> select salesmanname,salamt
+    -> from salesman_master;
++--------------+--------+
+| salesmanname | salamt |
++--------------+--------+
+| aman         |   3000 |
+| omkar        |   3000 |
+| raj          |   3000 |
+| ashish       |   3500 |
++--------------+--------+
+
+AFTER DELETION :
+--------------
+
+mysql> select salesmanname,salamt
+    -> from salesman_master;
++--------------+--------+
+| salesmanname | salamt |
++--------------+--------+
+| aman         |   3000 |
+| omkar        |   3000 |
+| raj          |   3000 |
++--------------+--------+
+
+
+ QUERY - B). DELETE ALL PRODUCTS FROM PRODUCT_MASTER WHERE QTYONHAND = 100?
+-------------------------------------------------------------------------
+
+mysql> DELETE FROM PRODUCT_MASTER
+    -> WHERE QTYONHAND='100';
+
+
+BEFORE DELETION :
+----------------
+
+mysql> SELECT PRODUCTNAME,QTYONHAND
+    -> FROM PRODUCT_MASTER;
++--------------+-----------+
+| PRODUCTNAME  | QTYONHAND |
++--------------+-----------+
+| T-shits      |       200 |
+| shirts       |       150 |
+| cotton jeans |       100 |
+| jeans        |       100 |
+| trousers     |       150 |
+| pull overs   |       150 |
+| denim shirts |       100 |
+| lycra tops   |        70 |
+| skirts       |        75 |
++--------------+-----------+
+
+
+AFTER DELETION :
+--------------
+
+mysql> SELECT PRODUCTNAME,QTYONHAND
+    -> FROM PRODUCT_MASTER;
++-------------+-----------+
+| PRODUCTNAME | QTYONHAND |
++-------------+-----------+
+| T-shits     |       200 |
+| shirts      |       150 |
+| trousers    |       150 |
+| pull overs  |       150 |
+| lycra tops  |        70 |
+| skirts      |        75 |
++-------------+-----------+
+
+
+ QUERY - C). DELETE FROM CLIENT WHERE THE COLUM STATE='Maharashtra' ?
+-------------------------------------------------------------------------
+
+mysql> DELETE FROM CLIENT_MASTER
+    -> WHERE STATE='MAHARASHTRA';
+
+BEFORE DELETION :
+----------------
+
+mysql> SELECT CLIENTNO,NAME,STATE
+    -> FROM CLIENT_MASTER;
++----------+-----------------+-------------+
+| CLIENTNO | NAME            | STATE       |
++----------+-----------------+-------------+
+| C00001   | Ivan bayross    | maharashtra |
+| C00002   | mamata mazumdar | tamil nadu  |
+| C00003   | chhaya bankar   | maharashtra |
+| C00004   | ashwini joshi   | karnataka   |
+| C00005   | hansei colaco   | maharashtra |
+| C00006   | deepak sharma   | karnataka   |
++----------+-----------------+-------------+
+
+
+AFTER DELETION :
+--------------
+
+mysql> SELECT CLIENTNO,NAME,STATE
+    -> FROM CLIENT_MASTER;
++----------+-----------------+------------+
+| CLIENTNO | NAME            | STATE      |
++----------+-----------------+------------+
+| C00002   | mamata mazumdar | tamil nadu |
+| C00004   | ashwini joshi   | karnataka  |
+| C00006   | deepak sharma   | karnataka  |
++----------+-----------------+------------+
+
+
+
+
+ EXERCISE : 6  (ALTER)
+----------------
+
+
+
+ QUERY - A). ADD COLUMN CALLED 'TELEPHONE' OF DATATYPE 'INT' AND SIZE '10' TO CLIENT_MASTER TABLE?
+-------------------------------------------------------------------------
+
+mysql> ALTER TABLE CLIENT_MASTER
+    -> ADD(TELEPHONE  INT(10));
+
+
+BEFORE ALTERING :
+----------------
+
+mysql> SELECT *
+    -> FROM CLIENT_MASTER;
++----------+-----------------+----------+----------+-----------+---------+------------+--------+
+| clientno | Name            | Address1 | Address2 | city      | pincode | state      | baldue |
++----------+-----------------+----------+----------+-----------+---------+------------+--------+
+| C00002   | mamata mazumdar | address1 | address2 | madras    |  780001 | tamil nadu |      0 |
+| C00004   | ashwini joshi   | address1 | address2 | bangalore |  560001 | karnataka  |      0 |
+| C00006   | deepak sharma   | address1 | address2 | mangalore |  560050 | karnataka  |      0 |
++----------+-----------------+----------+----------+-----------+---------+------------+--------+
+
+AFTER ALTERING :
+--------------
+
+mysql> SELECT *
+    -> FROM CLIENT_MASTER;
++----------+-----------------+----------+----------+-----------+---------+------------+--------+-----------+
+| clientno | Name            | Address1 | Address2 | city      | pincode | state      | baldue | TELEPHONE |
++----------+-----------------+----------+----------+-----------+---------+------------+--------+-----------+
+| C00002   | mamata mazumdar | address1 | address2 | madras    |  780001 | tamil nadu |      0 |      NULL |
+| C00004   | ashwini joshi   | address1 | address2 | bangalore |  560001 | karnataka  |      0 |      NULL |
+| C00006   | deepak sharma   | address1 | address2 | mangalore |  560050 | karnataka  |      0 |      NULL |
++----------+-----------------+----------+----------+-----------+---------+------------+--------+-----------+
+
+
+
+ QUERY - B). CHANGE THE SIZE ODF SELLPRICE COLUMN PRODUCT_MASTER TO (10,2)?
+-------------------------------------------------------------------------
+
+mysql> ALTER TABLE PRODUCT_MASTER
+    -> MODIFY COSTPRICE DECIMAL(10,2);
+
+BEFORE ALTERING :
+----------------
+
+mysql> DESCRIBE PRODUCT_MASTER COSTPRICE;
++-----------+---------+------+-----+---------+-------+
+| Field     | Type    | Null | Key | Default | Extra |
++-----------+---------+------+-----+---------+-------+
+| COSTPRICE | INT(8)  | YES  |     | NULL    |       |
++-----------+---------+------+-----+---------+-------+
+
+
+AFTER ALTERING :
+--------------
+
+mysql> DESCRIBE PRODUCT_MASTER COSTPRICE;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| COSTPRICE | decimal(10,2) | YES  |     | NULL    |       |
++-----------+---------------+------+-----+---------+-------+
+
+
+
+
+
+EXERCISE : 7 
+
+DESTROY TABLE CLIENT MASTER ALONG WITH ITS DATA ?
+--------------------------------------------------
+
+mysql> drop table client_master;
+
+
+BEFORE :
+--------
+
+mysql> show tables;
++-------------------------+
+| Tables_in_20bcs065_lab2 |
++-------------------------+
+| CLIENT_MASTER           |
+| PRODUCT_MASTER          |
+| salesman_master         |
++-------------------------+
+
+AFTER :
+-------
+
+mysql> show tables;
++-------------------------+
+| Tables_in_20bcs065_lab2 |
++-------------------------+
+| PRODUCT_MASTER          |
+| salesman_master         |
++-------------------------+
+
+
+EXERCISE : 8
+
+CHANGE NAME OF 'SALESMAN_MASTER' TO 'sman-mast' ?
+--------------------------------------------------
+
+mysql> rename table salesman_master to sman_mast;
+
+BEFORE :
+--------
+
+mysql> show tables;
++-------------------------+
+| Tables_in_20bcs065_lab2 |
++-------------------------+
+| PRODUCT_MASTER          |
+| salesman_master         |
++-------------------------+
+
+AFTER :
+--------
+
+mysql> show tables;
++-------------------------+
+| Tables_in_20bcs065_lab2 |
++-------------------------+
+| PRODUCT_MASTER          |
+| sman_mast               |
++-------------------------+

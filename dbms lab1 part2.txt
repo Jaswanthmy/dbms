@@ -1,0 +1,240 @@
+
+
+
+
+
+
+
+
+
+
+mysql> create table dept_locations
+    -> ( Dnumber   int  NOT NULL,
+    ->   Dlocation varchar(20)  NOT NULL,
+    ->   PRIMARY KEY(Dnumber,Dlocation),
+    ->   FOREIGN KEY(Dnumber)REFERENCES department(Dnumber));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table project
+    -> ( Pname       varchar(20)       NOT NULL,
+    ->   Pnumber     int               NOT NULL,
+    ->   Plocation   varchar(20),
+    ->   Dnum        int               NOT NULL,
+    ->   PRIMARY KEY(Pnumber),
+    ->   UNIQUE(Pname),
+    ->   FOREIGN KEY(Dnum)REFERENCES department(Dnumber));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table works_on
+    -> (Essn    CHAR(9)   NOT NULL,
+    ->  Pno     int       NOT NULL,
+    ->  Hours   decimal(3,1) NOT NULL,
+    ->  PRIMARY KEY(ESSN,PNO),
+    ->  FOREIGN KEY(ESSN)REFERENCES EMPLOYEE(SSN),
+    ->  FOREIGN KEY(PNO)REFERENCES PROJECT(PNUMBER));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TABLE DEPENDENT
+    -> (ESSN    CHAR(9)    NOT NULL,
+    ->  DEPENDENT_NAME  VARCHAR(20)   NOT NULL,
+    ->  SEX   CHAR,
+    ->  BDATE DATE,
+    ->  RELATIONSHIP VARCHAR(8),
+    ->  PRIMARY KEY(ESSN,DEPENDENT_NAME),
+    ->  FOREIGN KEY(ESSN)REFERENCES EMPLOYEE(SSN));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> show tables;
++-------------------------+
+| Tables_in_20bcs065_lab1 |
++-------------------------+
+| department              |
+| DEPENDENT               |
+| dept_locations          |
+| employee                |
+| project                 |
+| works_on                |
++-------------------------+
+6 rows in set (0.00 sec)
+
+mysql> insert into dept_locations values
+    -> ('1','Houston'),('4','Stafford'),('5','Bellaire'),('5','Sugarland'),('5','Houston');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> insert into project values
+    -> ('ProductX','1','Bellaire','5'),('ProductY','2','Sugarland','5'),
+    -> ('ProductZ','3','Huston','5'),('Computerization','10','Stafford','4'),
+    -> ('Reorganisation','20','Houston','1'),('Newbenefits','30','Stafford','4');
+Query OK, 6 rows affected (0.00 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> insert into works_on values
+    -> ('123456789','1','32.5'),('123456789','2','7.5'),('666884444','3','40.0'),
+    -> ('453453453','1','20.0'),('453453453','2','20.0'),('333445555','2','10.0'),
+    -> ('333445555','3','10.0'),('333445555','10','10.0'),('333445555','20','10.0'),
+    -> ('999887777','30','30.0'),('999887777','10','10.0'),('987987987','10','35.0'),
+    -> ('987987987','30','5.0'),('987654321','30','20.0'),('987654321','20','15.0'),
+    -> ('888665555','20','0.0');
+Query OK, 16 rows affected (0.01 sec)
+Records: 16  Duplicates: 0  Warnings: 0
+
+mysql> insert into dependent values
+    -> ('333445555','Alice','F','1986-04-05','Daughter'),
+    -> ('333445555','Theodore','M','1983-10-25','Son'),
+    -> ('333445555','Joy','F','1958-05-03','Spouse'),
+    -> ('987654321','Abner','M','1942-02-28','Spouse'),
+    -> ('123456789','Michael','M','1988-01-04','Son'),
+    -> ('123456789','Alice','F','1988-12-30','Daughter'),
+    -> ('123456789','Elizabeth','F','1967-05-05','Spouse');
+Query OK, 7 rows affected (0.00 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> select *from employee;
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+| fname    | Minit | lname   | ssn       | Bdate      | address                | sex  | salary   | super_ssn | Dno  |
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+| john     | B     | wick    | 123456789 | 1965-01-09 | 731 fondren,houston,TX | M    | 30000.00 | 333445555 |    5 |
+| franklin | T     | wong    | 333445555 | 1955-12-08 | 638 voss,houston,TX    | M    | 40000.00 | 888665555 |    5 |
+| joyce    | A     | english | 453453453 | 1972-07-31 | 5631 rice,housten,TX   | F    | 25000.00 | 333445555 |    5 |
+| ramesh   | K     | narayan | 666884444 | 1962-09-15 | 975 fire oak,humble,TX | M    | 38000.00 | 333445555 |    5 |
+| james    | E     | borg    | 888665555 | 1937-11-10 | 450 stone,houstan,TX   | M    | 55000.00 | NULL      |    1 |
+| jennifer | s     | wallace | 987654321 | 1941-06-20 | 291 berry,bellarie,TX  | F    | 43000.00 | 888665555 |    4 |
+| ahmed    | H     | jabbar  | 987987987 | 1969-03-29 | 980 dallas,houstan,TX  | M    | 25000.00 | 987654321 |    4 |
+| alicia   | J     | zelaya  | 999887777 | 1968-01-19 | 3321 castle,spring,TX  | F    | 25000.00 | 987654321 |    4 |
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+8 rows in set (0.00 sec)
+
+mysql> update employee
+    -> set address = '5631 rice,houston,TX'
+    -> where minit='A';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update employee
+    -> set address = '450 stone,houston,TX'
+    -> where minit='E';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update employee 
+    -> set minit='S',address='291 berry,bellaire,TX'
+    -> where ssn='987654321';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update employee
+    -> set minit='V',address='980 dallas,houston,TX'
+    -> where ssn='987987987';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select *from project;
++-----------------+---------+-----------+------+
+| Pname           | Pnumber | Plocation | Dnum |
++-----------------+---------+-----------+------+
+| ProductX        |       1 | Bellaire  |    5 |
+| ProductY        |       2 | Sugarland |    5 |
+| ProductZ        |       3 | Huston    |    5 |
+| Computerization |      10 | Stafford  |    4 |
+| Reorganisation  |      20 | Houston   |    1 |
+| Newbenefits     |      30 | Stafford  |    4 |
++-----------------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+mysql> update project
+    -> set plocation='Houston'
+    -> where pnumber=3;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+
+mysql> select *from employee;
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+| fname    | Minit | lname   | ssn       | Bdate      | address                | sex  | salary   | super_ssn | Dno  |
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+| john     | B     | wick    | 123456789 | 1965-01-09 | 731 fondren,houston,TX | M    | 30000.00 | 333445555 |    5 |
+| franklin | T     | wong    | 333445555 | 1955-12-08 | 638 voss,houston,TX    | M    | 40000.00 | 888665555 |    5 |
+| joyce    | A     | english | 453453453 | 1972-07-31 | 5631 rice,houston,TX   | F    | 25000.00 | 333445555 |    5 |
+| ramesh   | K     | narayan | 666884444 | 1962-09-15 | 975 fire oak,humble,TX | M    | 38000.00 | 333445555 |    5 |
+| james    | E     | borg    | 888665555 | 1937-11-10 | 450 stone,houston,TX   | M    | 55000.00 | NULL      |    1 |
+| jennifer | S     | wallace | 987654321 | 1941-06-20 | 291 berry,bellaire,TX  | F    | 43000.00 | 888665555 |    4 |
+| ahmed    | V     | jabbar  | 987987987 | 1969-03-29 | 980 dallas,houston,TX  | M    | 25000.00 | 987654321 |    4 |
+| alicia   | J     | zelaya  | 999887777 | 1968-01-19 | 3321 castle,spring,TX  | F    | 25000.00 | 987654321 |    4 |
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+8 rows in set (0.00 sec)
+
+mysql> select *from department;
++----------------+---------+-----------+----------------+
+| Dname          | Dnumber | Mgr_ssn   | Mgr_start_date |
++----------------+---------+-----------+----------------+
+| headquarters   |       1 | 888665555 | 1981-06-19     |
+| administration |       4 | 987654321 | 1995-01-01     |
+| research       |       5 | 333445555 | 1988-05-22     |
++----------------+---------+-----------+----------------+
+3 rows in set (0.00 sec)
+
+mysql> select *from dept_locations;
++---------+-----------+
+| Dnumber | Dlocation |
++---------+-----------+
+|       1 | Houston   |
+|       4 | Stafford  |
+|       5 | Bellaire  |
+|       5 | Houston   |
+|       5 | Sugarland |
++---------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> select *from project;
++-----------------+---------+-----------+------+
+| Pname           | Pnumber | Plocation | Dnum |
++-----------------+---------+-----------+------+
+| ProductX        |       1 | Bellaire  |    5 |
+| ProductY        |       2 | Sugarland |    5 |
+| ProductZ        |       3 | Houston   |    5 |
+| Computerization |      10 | Stafford  |    4 |
+| Reorganisation  |      20 | Houston   |    1 |
+| Newbenefits     |      30 | Stafford  |    4 |
++-----------------+---------+-----------+------+
+6 rows in set (0.00 sec)
+
+mysql> select *from works_on;
++-----------+-----+-------+
+| Essn      | Pno | Hours |
++-----------+-----+-------+
+| 123456789 |   1 |  32.5 |
+| 123456789 |   2 |   7.5 |
+| 333445555 |   2 |  10.0 |
+| 333445555 |   3 |  10.0 |
+| 333445555 |  10 |  10.0 |
+| 333445555 |  20 |  10.0 |
+| 453453453 |   1 |  20.0 |
+| 453453453 |   2 |  20.0 |
+| 666884444 |   3 |  40.0 |
+| 888665555 |  20 |   0.0 |
+| 987654321 |  20 |  15.0 |
+| 987654321 |  30 |  20.0 |
+| 987987987 |  10 |  35.0 |
+| 987987987 |  30 |   5.0 |
+| 999887777 |  10 |  10.0 |
+| 999887777 |  30 |  30.0 |
++-----------+-----+-------+
+16 rows in set (0.00 sec)
+
+mysql> select *from dependent;
++-----------+----------------+------+------------+--------------+
+| ESSN      | DEPENDENT_NAME | SEX  | BDATE      | RELATIONSHIP |
++-----------+----------------+------+------------+--------------+
+| 123456789 | Alice          | F    | 1988-12-30 | Daughter     |
+| 123456789 | Elizabeth      | F    | 1967-05-05 | Spouse       |
+| 123456789 | Michael        | M    | 1988-01-04 | Son          |
+| 333445555 | Alice          | F    | 1986-04-05 | Daughter     |
+| 333445555 | Joy            | F    | 1958-05-03 | Spouse       |
+| 333445555 | Theodore       | M    | 1983-10-25 | Son          |
+| 987654321 | Abner          | M    | 1942-02-28 | Spouse       |
++-----------+----------------+------+------------+--------------+
+7 rows in set (0.00 sec)
+
+Query 1. Retrieve the name and address of all employees who work for the ‘Research’ department.
+----------------------------------------------------------------------------------------------------------

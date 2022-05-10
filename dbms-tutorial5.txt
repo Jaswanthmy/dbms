@@ -1,0 +1,265 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+
+
+mysql> select *from sales1;
++---------+------------+-------+----------+--------------+
+| orderID | date       | price | quantity | customerNam2 |
++---------+------------+-------+----------+--------------+
+|       1 | 2005-12-22 |   160 |        2 | smith        |
+|       2 | 2005-08-10 |   190 |        3 | Johnson      |
+|       3 | 2005-07-13 |   500 |        5 | baldwin      |
+|       4 | 2005-07-15 |   420 |        2 | smith        |
+|       5 | 2005-12-22 |  1000 |        4 | wood         |
+|       6 | 2005-10-02 |   820 |        4 | smith        |
+|       7 | 2005-11-03 |  2000 |        2 | baldwin      |
++---------+------------+-------+----------+--------------+
+
+
+QUEUES :
+--------
+
+
+
+1. Count how many orders have made a customer with CustomerName of Smith.
+
+
+mysql> select count(*)
+    -> from sales1
+    -> where customerNam2='smith';
++----------+
+| count(*) |
++----------+
+|        3 |
++----------+
+
+
+2. Find number of unique customers that have ordered from the store.
+
+
+
+mysql> select count(*) as unique_customers
+    -> from (select customerNam2 from sales1 group by customerNam2) as a1;
++------------------+
+| unique_customers |
++------------------+
+|                4 |
++------------------+
+
+
+
+3. Find out total no. of items ordered by all the customers.
+
+
+
+mysql> select sum(quantity) as total_items_ordered
+    -> from sales1;
++---------------------+
+| total_items_ordered |
++---------------------+
+|                  22 |
++---------------------+
+
+
+
+4. Find out average number of items per order.
+
+
+
+mysql> select avg(quantity) as avg_items
+    -> from sales1;
++-----------+
+| avg_items |
++-----------+
+|    3.1429 |
++-----------+
+
+
+
+5. Find out the average Quantity for all orders with Price greater than 200.
+
+
+
+mysql> select avg(quantity) as avg_items
+    -> from sales1
+    -> where price>'200';
++-----------+
+| avg_items |
++-----------+
+|    3.4000 |
++-----------+
+
+
+
+6. Find out what was the minimum price paid for any of the orders.
+
+
+
+mysql> select min(price*quantity) as least_priced_order
+    -> from sales1;
++--------------------+
+| least_priced_order |
++--------------------+
+|                320 |
++--------------------+
+
+
+7. Find out the highest Price form the given sales table.
+
+
+
+mysql> select max(price*quantity) as highest_priced_order
+    -> from sales1;
++----------------------+
+| highest_priced_order |
++----------------------+
+|                 4000 |
++----------------------+
+
+
+
+8. List out unique customers name only from the table.
+
+
+
+mysql> select customerNam2 as name_of_customer
+    -> from sales1
+    -> group by customernam2;
++------------------+
+| name_of_customer |
++------------------+
+| smith            |
+| Johnson          |
+| baldwin          |
+| wood             |
++------------------+
+
+
+
+9. List out name of the customers who have given order in the month of December.
+
+
+
+mysql> select customerNam2 as name_of_customer
+    -> from sales1
+    -> where month(date)='12';
++------------------+
+| name_of_customer |
++------------------+
+| smith            |
+| wood             |
++------------------+
+
+
+10. Find out the total amount of money spent for each of the customers.
+
+
+
+mysql> select customerNam2 as name_of_customer,sum(price*quantity) as amount_spent
+    -> from sales1
+    -> group by customerNam2;
++------------------+--------------+
+| name_of_customer | amount_spent |
++------------------+--------------+
+| smith            |         4440 |
+| Johnson          |          570 |
+| baldwin          |         6500 |
+| wood             |         4000 |
++------------------+--------------+
+
+
+
+11. Select all unique customers who have spent more than 1200 in the store.
+
+
+
+mysql> select customerNam2 as name_of_customer,sum(price*quantity) as amount_spent
+    -> from sales1
+    -> group by customerNam2
+    -> having amount_spent>'1200';
++------------------+--------------+
+| name_of_customer | amount_spent |
++------------------+--------------+
+| smith            |         4440 |
+| baldwin          |         6500 |
+| wood             |         4000 |
++------------------+--------------+
+
+
+
+12. Select all customers that have ordered more than 5 items in total from all their orders.
+
+
+
+mysql> select customerNam2 as name_of_customer,sum(quantity) as total_items_purchased
+    -> from sales1
+    -> group by customerNam2
+    -> having sum(quantity)>5;
++------------------+-----------------------+
+| name_of_customer | total_items_purchased |
++------------------+-----------------------+
+| smith            |                     8 |
+| baldwin          |                     7 |
++------------------+-----------------------+
+
+
+
+13. Select all customers who have spent more than 1000, after 10/01/2005.
+
+
+
+mysql> select customerNam2 as customer_name, sum(price*quantity) as amount_spent 
+    -> from (select customerNam2,price,quantity from sales1 where date>'2005-01-
+10') as A
+    -> group by customerNam2
+    -> having amount_spent>'1000';
++---------------+--------------+
+| customer_name | amount_spent |
++---------------+--------------+
+| smith         |         4440 |
+| baldwin       |         6500 |
+| wood          |         4000 |
++---------------+--------------+
+
+
+
+14. Select orders in increasing order of order price.
+
+
+
+mysql> select orderid as Order_ID,price as Order_price
+    -> from sales1
+    -> order by price ASC;
++----------+-------------+
+| Order_ID | Order_price |
++----------+-------------+
+|        1 |         160 |
+|        2 |         190 |
+|        4 |         420 |
+|        3 |         500 |
+|        6 |         820 |
+|        5 |        1000 |
+|        7 |        2000 |
++----------+-------------+
+
+
+
+15. Select orders in decreasing order of order price.
+
+
+
+mysql> select orderid as Order_ID,price as Order_price
+    -> from sales1
+    -> order by price DESC;
++----------+-------------+
+| Order_ID | Order_price |
++----------+-------------+
+|        7 |        2000 |
+|        5 |        1000 |
+|        6 |         820 |
+|        3 |         500 |
+|        4 |         420 |
+|        2 |         190 |
+|        1 |         160 |
++----------+-------------+

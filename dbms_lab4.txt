@@ -1,0 +1,181 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+
+
+
+CREATING TABLES :
+---------------
+
+mysql> create table employee1
+    ->(emp_id  int(3)  NOT NULL,
+    -> emp_name  varchar(15) NOT NULL,
+    -> salary    decimal(10,2),
+    -> dno       varchar(5)  NOT NULL);
+
+mysql> create table department1
+    -> (dno varchar(5) NOT NULL,
+    -> dept_name  varchar(15) NOT NULL);
+
+
+INSERTING VALUES INTO TABLES :
+----------------------------
+
+mysql> insert into employee1 values ('101','amit','25000','D1001'), ('102','sunil','20000','D1002'), ('103','rakesh','18000','D1003'), ('104','ajay','16000','D1001'), ('105','suhail','20000','D1002'), ('106','arif','18000','D1004'), ('107','suresh','24000','D1002'), ('108','vijay','22000','D1003');
+
+
+
+mysql> insert into department1 values
+    -> ('D1001','IT'),
+    -> ('D1002','Sales'),
+    -> ('D1003','Marketing'),
+    -> ('D1004','HR');
+
+TABLES AT LAST :
+---------------
+
+Employee1->
++--------+----------+----------+-------+
+| emp_id | emp_name | salary   | dno   |
++--------+----------+----------+-------+
+|    101 | amit     | 25000.00 | D1001 |
+|    102 | sunil    | 20000.00 | D1002 |
+|    103 | rakesh   | 18000.00 | D1003 |
+|    104 | ajay     | 16000.00 | D1001 |
+|    105 | suhail   | 20000.00 | D1002 |
+|    106 | arif     | 18000.00 | D1004 |
+|    107 | suresh   | 24000.00 | D1002 |
+|    108 | vijay    | 22000.00 | D1003 |
++--------+----------+----------+-------+
+
+Department1->
++-------+-----------+
+| dno   | dept_name |
++-------+-----------+
+| D1001 | IT        |
+| D1002 | Sales     |
+| D1003 | Marketing |
+| D1004 | HR        |
++-------+-----------+
+
+
+QUERIES :
+---------
+
+
+1. Display total sum required to pay the salary of all employees.
+
+
+mysql> select sum(salary)
+    -> from employee1;
++-------------+
+| sum(salary) |
++-------------+
+|   163000.00 |
++-------------+
+
+
+2. Display the average salary, minimum salary and maximum salary of the Company.
+
+
+mysql> select avg(salary) as company_avg,min(salary) as company_min,max(salary) as company_max
+    -> from employee1;
++--------------+-------------+-------------+
+| company_avg  | company_min | company_max |
++--------------+-------------+-------------+
+| 20375.000000 |    16000.00 |    25000.00 |
++--------------+-------------+-------------+
+
+
+3. Display the sum of salary department-wise.
+
+
+mysql> select dno,sum(salary)
+    -> from employee1
+    -> group by dno;
++-------+-------------+
+| dno   | sum(salary) |
++-------+-------------+
+| D1001 |    41000.00 |
+| D1002 |    64000.00 |
+| D1003 |    40000.00 |
+| D1004 |    18000.00 |
++-------+-------------+
+
+
+4. Display the maximum salary department-wise.
+
+
+mysql> select dno,max(salary) as dept_max_salary
+    -> from employee1
+    -> group by dno;
++-------+-----------------+
+| dno   | dept_max_salary |
++-------+-----------------+
+| D1001 |        25000.00 |
+| D1002 |        24000.00 |
+| D1003 |        22000.00 |
+| D1004 |        18000.00 |
++-------+-----------------+
+
+
+5 Display the details of the employee who earns the maximum salary.
+
+
+mysql> select *
+    -> from employee1
+    -> where salary=(select max(salary)
+    -> from employee1);
++--------+----------+----------+-------+
+| emp_id | emp_name | salary   | dno   |
++--------+----------+----------+-------+
+|    101 | amit     | 25000.00 | D1001 |
++--------+----------+----------+-------+
+
+
+6. Display details of every employee having maximum salary in his Department.
+
+
+mysql> select * from employee1 join (select dno,max(salary) as salary from employee1 group by dno) as alias using(dno,salary);
++----------+-------+--------+----------+
+| salary   | dno   | emp_id | emp_name |
++----------+-------+--------+----------+
+| 25000.00 | D1001 |    101 | amit     |
+| 18000.00 | D1004 |    106 | arif     |
+| 24000.00 | D1002 |    107 | suresh   |
+| 22000.00 | D1003 |    108 | vijay    |
++----------+-------+--------+----------+
+
+
+7. Display the details of the employee who earns more salary than the average salary of his department.
+
+
+mysql> select *
+    -> from employee1
+    -> where salary>
+    -> (select avg(salary)
+    -> from employee1);
++--------+----------+----------+-------+
+| emp_id | emp_name | salary   | dno   |
++--------+----------+----------+-------+
+|    101 | amit     | 25000.00 | D1001 |
+|    107 | suresh   | 24000.00 | D1002 |
+|    108 | vijay    | 22000.00 | D1003 |
++--------+----------+----------+-------+
+
+
+8. Display total number of employees in each department along with the department name.
+
+
+mysql> select *
+    -> from department1 join (select dno,count(*) as num_of_employee
+    -> from employee1
+    -> group by dno) as t using(dno);
++-------+-----------+-----------------+
+| dno   | dept_name | num_of_employee |
++-------+-----------+-----------------+
+| D1001 | IT        |               2 |
+| D1002 | Sales     |               3 |
+| D1003 | Marketing |               2 |
+| D1004 | HR        |               1 |
++-------+-----------+-----------------+

@@ -1,0 +1,323 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+CREATING TABLES:
+-----------------
+
+mysql> create table student
+    -> (snum   int(3)   NOT NULL,
+    -> sname   varchar(10) ,
+    -> major   varchar(10),
+    -> level   varchar(2),
+    -> age  int(2),
+    -> PRIMARY KEY (snum));
+
+
+mysql> create table faculty
+    -> (fid int(3) NOT NULL,
+    -> fname varchar(15) ,
+    -> deptid int(3),
+    -> PRIMARY KEY(fid));
+
+
+mysql> create table class
+    -> (cname  varchar(6)  NOT NULL,
+    -> meets_at varchar(10),
+    -> room varchar(4),
+    -> fid int(3) NOT NULL,
+    -> PRIMARY KEY (cname),
+    -> FOREIGN KEY (fid) REFERENCES faculty(fid));
+
+mysql> create table enrolled
+    -> (snum  int(3) NOT NULL,
+    -> cname varchar(6) NOT NULL,
+    -> CONSTRAINT PK_enrolled PRIMARY KEY(snum,cname));
+
+
+
+INSERTING VALUES INTO TABLES :
+-------------------------------
+
+
+mysql> insert into student values
+    -> ('101','JHON','CS','SR','19'),
+    -> ('102','SMITH','CS','JR','20'),
+    -> ('103','JACOB','ECE','SR','20'),
+    -> ('104','TOM','CS','JR','20'),
+    -> ('105','SID','CS','JR','20'),
+    -> ('106','HARRY','HISTORY','SR','21'),
+    -> ('107','HELLEN','CS','JR','21'),
+    -> ('108','BOB','ENGLISH','SR','22'),
+    -> ('109','ANDY','ECE','JR','21'),
+    -> ('110','CHARLES','HISTORY','SR','23');
+
+
+mysql> insert into faculty values
+    -> ('201','S. JACKSON','301'),
+    -> ('202','M. SHANKS','302'),
+    -> ('203','I. TEACH','302'),
+    -> ('204','A. ZOBRAH','303'),
+    -> ('205','M. JENSEN','303');
+
+
+mysql> insert into class values
+    -> ('CSC342','MORNING','R128','201'),
+    -> ('CSC343','NOON','R128','203'),
+    -> ('CSC345','NIGHT','R154','204'),
+    -> ('ECE300','MORNING','R111','202'),
+    -> ('ECE301','NOON','R111','203'),
+    -> ('ENG366','MORNING','R154','203'),
+    -> ('ENG367','EVENING','R111','205'),
+    -> ('HIS320','EVENING','R128','205');
+
+
+mysql> insert into enrolled values
+    -> ('101','CSC342'),
+    -> ('101','CSC343'),
+    -> ('101','CSC345'),
+    -> ('101','ECE300'),
+    -> ('101','ENG366'),
+    -> ('102','CSC343'),
+    -> ('102','CSC345'),
+    -> ('102','ECE301'),
+    -> ('103','ECE300'),
+    -> ('103','ECE301'),
+    -> ('104','CSC342'),
+    -> ('104','ECE301'),
+    -> ('105','CSC345'),
+    -> ('105','ECE300'),
+    -> ('106','ENG366'),
+    -> ('106','HIS320'),
+    -> ('107','CSC342'),
+    -> ('107','ENG366'),
+    -> ('108','ENG367'),
+    -> ('108','HIS320'),
+    -> ('109','ECE300'),
+    -> ('109','ECE301'),
+    -> ('110','ENG366'),
+    -> ('110','HIS320');
+
+
+
+
+
+QUERIES :
+---------
+
+
+
+1. Find the names of all Juniors(Level = JR) who are enrolled in a class taught by I. Teach.
+
+
+QUERY:
+-------
+
+mysql> select s.sname as student_name
+    -> from student as s join enrolled e on s.snum=e.snum
+    -> join class c on e.cname=c.cname
+    -> join faculty f on c.fid=f.fid
+    -> where s.level='JR' and f.fname='I. TEACH'
+    -> group by s.sname;
+
+
+
+OUTPUT :
+---------
++---------------+
+| student_name  |
++---------------+
+| SMITH         |
+| TOM           |
+| HELLEN        |
+| ANDY          |
++---------------+
+
+
+
+2. Find the age of the oldest student who is either a History major or enrolled in a course taught by I. Teach.
+
+
+QUERY:
+---------
+
+mysql> select  max(s.age)  
+    ->from student as s join enrolled e on s.snum=e.snum 
+    ->join class c on e.cname=c.cname 
+    ->join faculty f on c.fid=f.fid 
+    ->where s.major='history' or f.fname='i. teach';
+
+OUTPUT :
+---------
+
++------------+
+| max(s.age) |
++------------+
+|         23 |
++------------+
+
+
+
+3. Find the names of all classes that either meet in room R128 or have fiveor more students enrolled.
+
+QUERY:
+---------
+mysql> select c.cname  from student as s join enrolled e on s.snum=e.snum 
+    ->join class c on e.cname=c.cname 
+    ->join faculty f on c.fid=f.fid  
+    ->join (select e1.cname , count(e1.cname) as co from enrolled as e1 group by e1.cname) as d on c.cname=d.cname 
+    ->where c.room='R128' or d.co >=5 group by c.cname;
+
+
+OUTPUT :
+---------
++--------+
+| cname  |
++--------+
+| CSC342 |
+| CSC343 |
+| HIS320 |
++--------+
+
+
+
+4. Find the names of all students who are enrolled in two class that meet atthe same time.
+
+QUERY:
+---------
+
+mysql> select s.sname as student_name , c.meets_at as time  
+    ->from student as s join enrolled e on s.snum=e.snum 
+    ->join class c on e.cname=c.cname join faculty f on c.fid=f.fid 
+    ->join (select meets_at , count(meets_at) as co from class  group by meets_at) as a   on c.meets_at=a.meets_at  
+    ->where a.co=2 group by s.sname,c.meets_at;
+
+OUTPUT :
+---------
+
++--------------+---------+
+| student_name | time    |
++--------------+---------+
+| JHON         | NOON    |
+| SMITH        | NOON    |
+| JACOB        | NOON    |
+| TOM          | NOON    |
+| HARRY        | EVENING |
+| BOB          | EVENING |
+| ANDY         | NOON    |
+| CHARLES      | EVENING |
++--------------+---------+
+
+
+
+
+5. Find the names of faculty members who teach in every room in whichsome class is taught.
+
+QUERY:
+---------
+
+    ->mysql> select f.fname from faculty as f join class c on f.fid=c.fid  
+    ->join (select f1.fname,count(c1.room) as co from faculty as f1 join class c1 on f1.fid=c1.fid group by f1.fname) as a on f.fname=a.fname  
+    ->where a.co=(select count(*) from (select distinct room from class) as t) 
+    ->group by fname;
+
+
+OUTPUT :
+---------
+
++----------+
+| fname    |
++----------+
+| I. TEACH |
++----------+
+
+
+
+6. Find the names of faculty members for whom the combined enrollment ofthe course that they teach is less than five.
+
+QUERY:
+---------
+
+OUTPUT :
+---------
+
+
+7. For each level, print the level and the average age of students for that level.
+
+QUERY:
+---------
+
+mysql> select level,avg(age)
+    -> from student
+    -> group by level;
+
+
+OUTPUT :
+---------
+
++-------+----------+
+| level | avg(age) |
++-------+----------+
+| SR    |  21.0000 |
+| JR    |  20.4000 |
++-------+----------+
+
+
+
+
+8. For all levels except JR, print the level and the average age of studentsfor that level.
+
+QUERY:
+---------
+
+mysql> select level,avg(age)
+    -> from student
+    -> where level <> 'JR'
+    -> group by level;
+
+OUTPUT :
+---------
+
++-------+----------+
+| level | avg(age) |
++-------+----------+
+| SR    |  21.0000 |
++-------+----------+
+
+
+
+9. For each faculty member that has taught class only in room R128 print the faculty member’s name and the total number of classes he or she hastaught.
+
+QUERY:
+---------
+
+OUTPUT :
+---------
+
+
+10. Find the names of students enrolled in the maximum number of classes.
+
+QUERY:
+---------
+
+mysql> select s.sname,count(s.sname)
+    -> from student as s join enrolled as e on s.snum=e.snum
+    -> group by s.sname;
+
+OUTPUT :
+---------
+
++---------+----------------+
+| sname   | count(s.sname) |
++---------+----------------+
+| JHON    |              5 |
+| SMITH   |              3 |
+| JACOB   |              2 |
+| TOM     |              2 |
+| SID     |              2 |
+| HARRY   |              2 |
+| HELLEN  |              2 |
+| BOB     |              2 |
+| ANDY    |              2 |
+| CHARLES |              2 |
++---------+----------------+
+

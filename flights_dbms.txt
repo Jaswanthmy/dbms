@@ -1,0 +1,472 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+
+CREATING TABLES:
+-----------------
+
+
+mysql> describe flights;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| flno       | int         | NO   |     | NULL    |       |
+| where_from | varchar(15) | YES  |     | NULL    |       |
+| where_to   | varchar(15) | YES  |     | NULL    |       |
+| distance   | int         | YES  |     | NULL    |       |
+| departs    | time        | YES  |     | NULL    |       |
+| arrives    | time        | YES  |     | NULL    |       |
+| price      | int         | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+
+
+
+
+
+
+mysql> create table aircraft
+    -> (aid  int(3) NOT NULL,
+    -> aname varchar(15),
+    -> cruising_range   int(4));
+
+
+
+mysql> create table certified
+    -> (eid  int(3)  NOT NULL,
+    -> aid   int(3)  NOT NULL);
+
+
+
+mysql> create table employees
+    -> (eid  int(3)  NOT NULL,
+    -> ename varchar(15) ,
+    -> salary int(6));
+
+
+
+
+
+
+Q1)Find the names of aircraft such that all pilots certified to operate them have salaries more than Rs 80,000.
+
+
+Inserting values :
+------------------
+
+
+mysql> INSERT INTO aircraft values 
+    ->(123,'Air India',1000),
+    ->(456,'Vistara',5000);
+
+
+mysql> INSERT INTO employees  values
+    ->(1,'ROCKEY',90000),
+    ->(2,'ADHEERA',85000),
+    ->(3,'RAMIKA',30000);
+
+
+mysql> INSERT INTO certified values
+    ->(1,123),
+    ->(2,123),
+    ->(1,456),
+    ->(2,456),
+    ->(3,456);
+
+
+mysql> SELECT DISTINCT a.aname
+    -> FROM aircraft a,certified c,employees e
+    -> WHERE a.aid=c.aid
+    -> AND c.eid=e.eid
+    -> AND NOT EXISTS
+    -> (SELECT *
+    -> FROM employees e1
+    -> WHERE e1.eid=e.eid
+    -> AND e1.salary<80000);
+
+
+Output:
+--------
+
++-----------------+
+| aname           |
++-----------------+
+| Air India       |
++-----------------+
+
+
+
+Q2)For each pilot who is certified for more than three aircrafts,find the eid and the maximum cruisingrange of the aircraft for which he/she is certified.
+
+
+Inserting values :(ADDITIONAL VALUES)
+------------------
+
+mysql> INSERT INTO aircraft values 
+    ->(789,'spice jet',3000);
+
+mysql> INSERT INTO certified values
+    ->(1,789);
+
+
+mysql> SELECT c.eid,MAX(cruisingrange)
+    -> FROM certified c,aircraft a
+    -> WHERE c.aid=a.aid
+    -> GROUP BY c.eid
+    -> HAVING COUNT(*)>3;
+
+Output:
+--------
+
++-----+--------------------+
+| eid | max(cruisingrange) |
++-----+--------------------+
+|   1 |               5000 |
++-----+--------------------+
+
+
+
+
+Q3)Find the names of pilots whose salary is less than the price of the cheapest route from Los Angeles to Honolulu.
+
+
+Inserting values : (ADDITIONAL VALUES)
+------------------
+
+
+mysql> INSERT INTO flight values
+            (1,'Los Angeles','Honolulu',360,'10:45:00','12:00:00',40000),
+            (2,'Los Angeles','Honolulu',5000,'12:15:00','04:30:00',55000),
+
+
+mysql> SELECT DISTINCT e.ename
+    -> FROM employees e
+    -> WHERE e.salary<
+    -> (SELECT MIN(f.price)
+    -> FROM flights f
+    -> WHERE f.frm='Los Angeles'
+    -> AND f.too='Honolulu');
+
+
+Output:
+--------
+
++---------+
+| ename   |
++---------+
+| RAMIKA  |
++---------+
+
+
+
+Q4)For all aircraft with cruisingrange over 1000 miles, find the name of the aircraft and the average salary of all pilots certified for this aircraft.
+
+
+mysql> SELECT a.aid,a.aname,AVG(e.salary)
+    -> FROM aircraft a,certified c,employees e
+    -> WHERE a.aid=c.aid
+    -> AND c.eid=e.eid
+    -> AND a.cruisingrange>1000
+    -> GROUP BY a.aid,a.aname;
+
+
+
+Output:
+--------
+
++-----+-------------+---------------+
+| aid | aname       | avg(e.salary) |
++-----+-------------+---------------+
+| 123 | Air India   |    87500.0000 |
+| 456 | Vistara     |    68333.3333 |
+| 789 | spice jet   |    90000.0000 |
++-----+-------------+---------------+
+
+
+
+Q5)Find the names of pilots certified for some "VISTARA" aircraft.
+
+
+
+mysql> SELECT distinct e.ename
+    -> FROM employees e,aircraft a,certified c
+    -> WHERE e.eid=c.eid
+    -> AND c.aid=a.aid
+    -> AND a.aname='Boeing';
+
+Output:
+--------
+
++----------+
+| ename    |
++----------+
+| ROCKEY   |
+| ADHEERA  |
+| RAMIKA   |
++----------+
+
+
+
+Q6)Find the aid's of all aircraft that can be used on routes from Los Angeles to Chicago.
+
+
+Inserting values : (ADDITIONAL VALUES)
+------------------
+
+mysql> INSERT INTO flight values
+            (3,'Los Angeles','chicago','2500','11:45:00','14:00:00',40000);
+
+
+
+
+mysql> SELECT a.aid
+    -> FROM aircraft a
+    -> WHERE a.cruisingrange>
+    -> (SELECT MIN(f.distance)
+    -> FROM flights f
+    -> WHERE f.frm='Los Angeles'
+    -> AND f.too='chicago');
+
+
+Output:
+--------
+
++-----+
+| aid |
++-----+
+| 456 |
+| 789 |
++-----+
+
+
+
+
+
+VALUES IN TABLES UNTIL NOW :
+---------------------------
+----------------------------
+
+
+mysql> SELECT * FROM flights;
++----+-------------+-----------+----------+----------+----------+-------+
+| no | frm         | too       | distance | departs  | arrives  | price |
++----+-------------+-----------+----------+----------+----------+-------+
+|  1 | Los Angeles | Honolulu  |      360 | 10:45:00 | 12:00:00 | 40000 |
+|  2 | Los Angeles | Honolulu  |     5000 | 12:15:00 | 04:30:00 | 55000 |
+|  3 | Los Angeles |  chicago  |     2500 | 11:45:00 | 14:00:00 | 40000 |
++----+-------------+-----------+----------+----------+----------+-------+
+
+
+mysql> SELECT * FROM aircraft;
++-----+------------+---------------+
+| aid | aname      | cruisingrange |
++-----+------------+---------------+
+| 123 | Air India  |          1000 |
+| 456 | Vistara    |          5000 |
+| 789 | spice jet  |          3000 |
++-----+------------+---------------+
+
+
+
+mysql> SELECT * FROM employees;
++-----+---------+--------+
+| eid | ename   | salary |
++-----+---------+--------+
+|   1 | ROCKEY  |  90000 |
+|   2 | ADHEERA |  85000 |
+|   3 | RAMIKA  |  30000 |
++-----+---------+--------+
+
+
+mysql> SELECT * FROM certified;
++-----+-----+
+| eid | aid |
++-----+-----+
+|   1 | 123 |
+|   2 | 123 |
+|   1 | 456 |
+|   2 | 456 |
+|   3 | 456 |
+|   1 | 789 |
++-----+-----+
+
+
+
+
+
+
+
+
+
+
+
+Q7)Identify the routes that can be piloted by every pilot who makes more than "$50,000".
+                                                                              ----------
+
+mysql> select distinct f.from,f.to
+    -> From flights f
+    -> WHERE NOT EXISTS
+    -> (select *
+    -> from employee E
+    -> where E.salary>100000
+    -> AND NOT EXISTS
+    -> (select * from aircraft A,certified C
+    -> where A.cruisingrange>F.distance AND E.eid=C.eid AND A.aid=C.aid)as an);
+
+Output:
+--------
+
++--------------+----------+
+| from         | to       |
++--------------+----------+
+|  Los Angeles |  honlulu |
+|  Los Angeles |  chicago |
++--------------+----------+
+
+
+
+Q8)Print the enames of pilots who can operate planes with cruisingrange greater than 3000 miles but are not certified on any Boeing aircraft
+
+
+
+
+
+
+Q9)A customer wants to travel from Madison to New York with no more than two changes of flight. List the choice of departure times from Madison if the customer wants to arrive in New York by 6 p.m.
+
+
+
+
+
+
+
+Q10)Compute the difference between the average salary of a pilot and the average salary of all employees (including pilots).
+
+
+mysql> select t1.avg - t2.avg as DIFFERENCE 
+    -> from
+    -> (select avg(E.salary) as avg
+    -> from employees E
+    -> where E.eid IN
+    -> (select distinct C.eid from certified C))as t1,
+    -> (select avg(E1.salary) as avg from employees E1) as t2;
+
+Output:
+--------
+
++------------+
+| DIFFERENCE |
++------------+
+| 0.0000     |
++------------+
+*since all the employees in tables are pilots.
+
+
+
+
+
+Q11)Print the name and salary of every nonpilot whose salary is more than the average salary for pilots.
+
+
+
+Inserting values : (ADDITIONAL VALUES) *INSERTING NON PILOT EMPLOYEES INTO TABLE,
+------------------
+
+mysql> INSERT INTO employees  values
+    -> (4,'REENA','60000'),
+    -> (5,'ANAND','70000');
+
+
+
+mysql> select E.ename,E.salary
+    -> from employee E
+    -> where E.id NOT IN
+    -> (select distinct C.eid from certified C) AND
+    -> E.salary > (select avg(E1.salary) from employees E1 where E1.eid IN
+    -> (select distinct C1.eid from certified C1)as t);
+
+Output:
+--------
+
+
+
++----------+------------+
+| ename    | salary     |
++----------+------------+
+|  ANAND   | 70000.0000 |
++----------+------------+
+
+
+
+
+Q12)Print the names of employees who are certified only on aircrafts with cruising range longer than 1000 miles.
+
+
+
+mysql> select E.name 
+    -> from employees E,certified C,aircraft A
+    -> where C.aid=A.aid AND E.eid=C.eid
+    -> group by E.eid,E.ename
+    -> having EVERY(A.cruisingrange>1000);
+
+Output:
+--------
+
+
+
++----------+
+| ename    | 
++----------+
+| ROCKEY   |
+| ADHEERA  |
+| RAMIKA   |
++----------+
+
+
+
+Q13)Print the names of employees who are certified only on aircrafts with cruising range longer than 1000 miles, but on at least two such aircrafts.
+
+
+
+mysql> select E.name 
+    -> from employees E,certified C,aircraft A
+    -> where C.aid=A.aid AND E.eid=C.eid
+    -> group by E.eid,E.ename
+    -> having EVERY(A.cruisingrange>1000) AND count(*)>1;
+
+Output:
+--------
+
+
+
++----------+
+| ename    | 
++----------+
+| ROCKEY   |
++----------+
+
+
+
+
+Q14)Print the names of employees who are certified only on aircrafts with cruising range longer than 1000 miles and who are certified on some "Air India" aircraft.
+                                         ----------- 
+
+
+mysql> select E.name 
+    -> from employees E,certified C,aircraft A
+    -> where C.aid=A.aid AND E.eid=C.eid
+    -> group by E.eid,E.ename
+    -> having EVERY(A.cruisingrange>1000) AND ANY(A.aname='Boeing');
+
+
+Output:
+--------
+
+
++----------+
+| ename    | 
++----------+
+| ROCKEY   |
+| ADHEERA  |
++----------+
+
+

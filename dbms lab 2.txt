@@ -1,0 +1,303 @@
+
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+
+
+mysql> create database 20bcs065_lab2;
+
+mysql> use 20bcs065_lab2;
+Database changed
+
+mysql> create table client_master
+    -> (clientno   varchar(6)  NOT NULL,
+    ->  Name       varchar(20) NOT NULL,
+    ->  Address1   varchar(30),
+    ->  Address2   varchar(30),
+    ->  city       varchar(15),
+    ->  pincode    int(8)      NOT NULL,
+    ->  state      varchar(15),
+    ->  baldue     int(10));
+
+mysql> describe client_master
+    -> ;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| clientno | varchar(6)  | NO   |     | NULL    |       |
+| Name     | varchar(20) | NO   |     | NULL    |       |
+| Address1 | varchar(30) | YES  |     | NULL    |       |
+| Address2 | varchar(30) | YES  |     | NULL    |       |
+| city     | varchar(15) | YES  |     | NULL    |       |
+| pincode  | int         | NO   |     | NULL    |       |
+| state    | varchar(15) | YES  |     | NULL    |       |
+| baldue   | int         | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+
+
+mysql> create table product_master
+    -> (productNo    varchar(6)   NOT NULL,
+    ->  productname  varchar(15),
+    ->  quantity     decimal(3,2),
+    ->  piece        varchar(10),
+    ->  qtyonhand    int(8),
+    ->  tax          int(8),
+    ->  costprice    int(8)       NOT NULL,
+    ->  saleprice    int(8)       NOT NULL);
+
+
+mysql> insert into client_master values
+    -> ('C00001','Ivan bayross','address1','address2','mumbai','400001','maharashtra','15000'),
+    -> ('C00002','mamata mazumdar','address1','address2','madras','780001','tamil nadu','0'),
+    -> ('C00003','chhaya bankar','address1','address2','mumbai','400057','maharashtra','5000'),
+    -> ('C00004','ashwini joshi','address1','address2','bangalore','560001','karnataka','0'),
+    -> ('C00005','hansei colaco','address1','address2','mumbai','400060','maharashtra','2000'),
+    -> ('C00006','deepak sharma','address1','address2','mangalore','560050','karnataka','0');
+
+mysql> insert into product_master values
+    -> ('F00001','T-shits','5.00','piece','200','50','350','250'),
+    -> ('F0345','shirts','6.00','piece','150','50','500','350'),
+    -> ('F06734','cotton jeans','5.00','piece','100','20','600','450'),
+    -> ('F07865','jeans','5.00','piece','100','20','750','500'),
+    -> ('F07866','trousers','2.00','piece','150','50','850','550'),
+    -> ('F07867','pull overs','2.50','piece','150','50','850','550'),
+    -> ('F07868','denim shirts','4.00','piece','100','40','350','250'),
+    -> ('F07869','lycra tops','5.00','piece','70','30','300','175'),
+    -> ('FO7870','skirts','5.00','piece','75','30','450','300');
+
+
+mysql> select *from client_master;
++----------+-----------------+----------+----------+-----------+---------+-------------+--------+
+| clientno | Name            | Address1 | Address2 | city      | pincode | state       | baldue |
++----------+-----------------+----------+----------+-----------+---------+-------------+--------+
+| C00001   | Ivan bayross    | address1 | address2 | mumbai    |  400001 | maharashtra |  15000 |
+| C00002   | mamata mazumdar | address1 | address2 | madras    |  780001 | tamil nadu  |      0 |
+| C00003   | chhaya bankar   | address1 | address2 | mumbai    |  400057 | maharashtra |   5000 |
+| C00004   | ashwini joshi   | address1 | address2 | bangalore |  560001 | karnataka   |      0 |
+| C00005   | hansei colaco   | address1 | address2 | mumbai    |  400060 | maharashtra |   2000 |
+| C00006   | deepak sharma   | address1 | address2 | mangalore |  560050 | karnataka   |      0 |
++----------+-----------------+----------+----------+-----------+---------+-------------+--------+
+
+
+mysql> select *from product_master;
++-----------+--------------+----------+-------+-----------+------+-----------+-----------+
+| productNo | productname  | quantity | piece | qtyonhand | tax  | costprice | saleprice |
++-----------+--------------+----------+-------+-----------+------+-----------+-----------+
+| F00001    | T-shits      |     5.00 | piece |       200 |   50 |       350 |       250 |
+| F0345     | shirts       |     6.00 | piece |       150 |   50 |       500 |       350 |
+| F06734    | cotton jeans |     5.00 | piece |       100 |   20 |       600 |       450 |
+| F07865    | jeans        |     5.00 | piece |       100 |   20 |       750 |       500 |
+| F07866    | trousers     |     2.00 | piece |       150 |   50 |       850 |       550 |
+| F07867    | pull overs   |     2.50 | piece |       150 |   50 |       850 |       550 |
+| F07868    | denim shirts |     4.00 | piece |       100 |   40 |       350 |       250 |
+| F07869    | lycra tops   |     5.00 | piece |        70 |   30 |       300 |       175 |
+| FO7870    | skirts       |     5.00 | piece |        75 |   30 |       450 |       300 |
++-----------+--------------+----------+-------+-----------+------+-----------+-----------+
+
+
+EXERCISE 3 :
+-------------
+
+QUERY a) :  FIND OUT THE NAMES OF ALL THE CLIENTS ?
+----------------------------------------------------------------------
+
+mysql> select name
+    -> from client_master
+    -> ;
++-----------------+
+| name            |
++-----------------+
+| Ivan bayross    |
+| mamata mazumdar |
+| chhaya bankar   |
+| ashwini joshi   |
+| hansei colaco   |
+| deepak sharma   |
++-----------------+
+
+
+QUERY b) : RETRIEVE ENTIRE CONTENTS OF CLIENT MASTER TABLE ?
+----------------------------------------------------------------------
+
+
+mysql> select *from client_master;
++----------+-----------------+----------+----------+-----------+---------+-------------+--------+
+| clientno | Name            | Address1 | Address2 | city      | pincode | state       | baldue |
++----------+-----------------+----------+----------+-----------+---------+-------------+--------+
+| C00001   | Ivan bayross    | address1 | address2 | mumbai    |  400001 | maharashtra |  15000 |
+| C00002   | mamata mazumdar | address1 | address2 | madras    |  780001 | tamil nadu  |      0 |
+| C00003   | chhaya bankar   | address1 | address2 | mumbai    |  400057 | maharashtra |   5000 |
+| C00004   | ashwini joshi   | address1 | address2 | bangalore |  560001 | karnataka   |      0 |
+| C00005   | hansei colaco   | address1 | address2 | mumbai    |  400060 | maharashtra |   2000 |
+| C00006   | deepak sharma   | address1 | address2 | mangalore |  560050 | karnataka   |      0 |
++----------+-----------------+----------+----------+-----------+---------+-------------+--------+
+
+
+QUERY C) : RETRIEVE THE LIST OF NAMES,CITY AND STATE OF ALL THE CLIENTS ?
+----------------------------------------------------------------------
+
+
+mysql> SELECT NAME,CITY,STATE
+    -> FROM CLIENT_MASTER
+    -> ;
++-----------------+-----------+-------------+
+| NAME            | CITY      | STATE       |
++-----------------+-----------+-------------+
+| Ivan bayross    | mumbai    | maharashtra |
+| mamata mazumdar | madras    | tamil nadu  |
+| chhaya bankar   | mumbai    | maharashtra |
+| ashwini joshi   | bangalore | karnataka   |
+| hansei colaco   | mumbai    | maharashtra |
+| deepak sharma   | mangalore | karnataka   |
++-----------------+-----------+-------------+
+
+
+
+
+QUERY D) : LIST VARIOUS PRODUCTS AVAILABLE FROM PRODUCT_MASTER TABLE ?
+----------------------------------------------------------------------
+
+
+
+mysql> SELECT PRODUCTNAME
+    -> FROM PRODUCT_MASTER
+    -> ;
++--------------+
+| PRODUCTNAME  |
++--------------+
+| T-shits      |
+| shirts       |
+| cotton jeans |
+| jeans        |
+| trousers     |
+| pull overs   |
+| denim shirts |
+| lycra tops   |
+| skirts       |
++--------------+
+
+
+
+QUERY E) : LIST ALL CLIENTS WHO LIVE IN MUMBAI ?
+----------------------------------------------------------------------
+
+
+mysql> SELECT NAME 
+    -> FROM CLIENT_MASTER
+    -> WHERE CITY='MUMBAI';
++---------------+
+| NAME          |
++---------------+
+| Ivan bayross  |
+| chhaya bankar |
+| hansei colaco |
++---------------+
+
+
+
+EXERCISE 4 :
+------------
+
+QUERY A)  CHANGE THE CITY OF CLIENT NUMBER = C00005 TO BANGALORE ?
+----------------------------------------------------------------------
+
+
+mysql> UPDATE CLIENT_MASTER
+    -> SET CITY='bangalore'
+    -> WHERE CLIENTNO='C00005';
+
+
+    BEFORE UPDATE :
+   -----------------
+
+
+
+
+mysql>  SELECT CITY,CLIENTNO
+    -> FROM CLIENT_MASTER
+    -> WHERE CLIENTNO='C00005';
++-----------+----------+
+| CITY      | CLIENTNO |
++-----------+----------+
+| maharashtra | C00005   |
++-----------+----------+
+
+    AFTER UPDATE :
+   -----------------
+
+
+
+mysql>  SELECT CITY,CLIENTNO
+    -> FROM CLIENT_MASTER
+    -> WHERE CLIENTNO='C00005';
++-----------+----------+
+| CITY      | CLIENTNO |
++-----------+----------+
+| bangalore | C00005   |
++-----------+----------+
+
+
+QUERY B)  CHANGE THE BALANCE DUE OF CLIENT NUMBER = C00005 TO RS.1000 ?
+----------------------------------------------------------------------
+
+mysql> UPDATE CLIENT_MASTER
+    -> SET BALDUE=1000
+    -> WHERE CLIENTNO='C00001';
+
+    BEFORE UPDATE :
+   -----------------
+
+mysql> SELECT CLIENTNO,BALDUE
+    -> FROM CLIENT_MASTER
+    -> WHERE CLIENTNO='C00001';
++----------+--------+
+| CLIENTNO | BALDUE |
++----------+--------+
+| C00001   |  15000 |
++----------+--------+
+
+
+    AFTER UPDATE :
+   -----------------
+
+mysql> SELECT CLIENTNO,BALDUE
+    -> FROM CLIENT_MASTER
+    -> WHERE CLIENTNO='C00001';
++----------+--------+
+| CLIENTNO | BALDUE |
++----------+--------+
+| C00001   |   1000 |
++----------+--------+
+
+
+QUERY B)  CHANGE THE COST PRICE OF 'TROUSERS'  TO RS.950 ?
+----------------------------------------------------------------------
+
+mysql> UPDATE PRODUCT_MASTER
+    -> SET COSTPRICE=950
+    -> WHERE PRODUCTNAME='TROUSERS';
+
+    BEFORE UPDATE :
+   -----------------
+
+mysql> SELECT PRODUCTNAME,COSTPRICE
+    -> FROM PRODUCT_MASTER
+    -> WHERE PRODUCTNAME='TROUSERS';
++-------------+-----------+
+| PRODUCTNAME | COSTPRICE |
++-------------+-----------+
+| trousers    |       850 |
++-------------+-----------+
+
+
+    AFTER UPDATE :
+   -----------------
+
+mysql> SELECT PRODUCTNAME,COSTPRICE
+    -> FROM PRODUCT_MASTER
+    -> WHERE PRODUCTNAME='TROUSERS';
++-------------+-----------+
+| PRODUCTNAME | COSTPRICE |
++-------------+-----------+
+| trousers    |       950 |
++-------------+-----------+

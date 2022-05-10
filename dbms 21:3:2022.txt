@@ -1,0 +1,292 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+
+
+CREATING TABLES :
+-----------------
+
+mysql> create table table_sales
+    -> (OrderId     int(2)   NOT NULL,
+    ->  OrderDate   date     NOT NULL,
+    ->  OrderPrice  int(4)   NOT NULL,
+    ->  OrderQuantity  int(2),
+    ->  CustomerName   varchar(15)  NOT NULL);
+
+
+
+
+
+mysql> create table table_products
+    -> (ProductId   varchar(5)  NOT NULL,
+    ->  OrderID     int(2)  , 
+    ->  Manufacture_Date  date,
+    ->  Raw_Material  varchar(15),
+    ->  Vender_ID   int(2) NOT NULL);
+
+
+
+mysql> create table vender_info
+    -> (Vender_Id   int(2)  NOT NULL,
+    ->  Vender_Name  varchar(15));
+
+
+mysql> create table table_venders
+    -> (Raw_Materials  varchar(15),
+    ->  Venders        varchar(15),
+    ->  Vender_Id      int(2));
+
+INSERTING VALUES INTO TBLES;
+----------------------------
+
+mysql> insert into table_sales values
+    -> ('1','2005-12-22','160','2','smith'),
+    -> ('2','2005-08-10','190','2','johnson'),
+    -> ('3','2005-07-13','500','5','baldwin'),
+    -> ('4','2005-07-15','420','2','smith'),
+    -> ('5','2005-12-22','1000','4','wood'),
+    -> ('6','2005-10-02','820','4','smith'),
+    -> ('7','2005-11-03','2000','2','baldwin'),
+    -> ('8','2002-12-22','1000','4','wood'),
+    -> ('9','2004-12-29','5000','4','smith');
+
+
+
+mysql> insert into table_products values 
+    -> ('AZ145','2','2005-12-23','STEEL','1'), 
+    -> ('AZ147','6','2002-08-15','STEEL','3'), 
+    -> ('CS435','5','2001-11-04','STEEL','1'), 
+    -> ('CS783','1','2004-11-03','PLASTIC','2'), 
+    -> ('CS784','4','2005-11-28','PLASTIC','2'), 
+    -> ('FD123','2','2005-10-03','MILK','2'), 
+    -> ('FD267','5','2002-12-03','BREAD','4'), 
+    -> ('FD333','9','2001-12-12','MILK','1'), 
+    -> ('FD344','3','2005-11-03','MILK','1'),
+    -> ('GR233','3','2005-11-30','PULSES','2'), 
+    -> ('GR567','6','2005-09-03','PULSES','2');
+
+
+
+mysql> insert into vender_info values
+    -> ('1','smith'),
+    -> ('2','wills'),
+    -> ('3','johnson'),
+    -> ('4','roger');
+
+
+mysql> insert into table_venders values
+    -> ('STEEL','smith','1'),
+    -> ('PLASTIC','WILLS','2'),
+    -> ('STEEL','JOHNSON','3'),
+    -> ('MILK','SMITH','1'),
+    -> ('PULSES','WILLS','2'),
+    -> ('BREAD','ROGER','4'),
+    -> ('BREAD','WILLS','2'),
+    -> ('MILK','WILLS','3');
+
+
+QUERIES :
+---------
+
+
+1. Display product information which are ordered in the same year of its manufacturing year.
+
+
+mysql> select productid,orderdate,manufacture_date
+    -> from table_sales as t inner join table_products as p  on t.orderid=p.orderid
+    -> where year(orderdate)=year(manufacture_date);
+
++-----------+------------+------------------+
+| productid | orderdate  | manufacture_date |
++-----------+------------+------------------+
+| AZ145     | 2005-08-10 | 2005-12-23       |
+| CS784     | 2005-07-15 | 2005-11-28       |
+| FD123     | 2005-08-10 | 2005-10-03       |
+| FD344     | 2005-07-13 | 2005-11-03       |
+| GR233     | 2005-07-13 | 2005-11-30       |
+| GR567     | 2005-10-02 | 2005-09-03       |
++-----------+------------+------------------+
+
+
+2. Display product information which are ordered in the same year of its manufacturing year where vender is ‘Smith’.
+
+
+mysql> select productid,orderdate,manufacture_date,vender_name 
+    -> from table_sales inner join table_products 
+    -> on table_sales.orderid=table_products.orderid 
+    -> inner join vender_info on table_products.vender_id=vender_info.vender_id 
+    -> where year(orderdate)=year(manufacture_date)
+    -> and vender_name='smith';
+
++-----------+------------+------------------+-------------+
+| productid | orderdate  | manufacture_date | vender_name |
++-----------+------------+------------------+-------------+
+| AZ145     | 2005-08-10 | 2005-12-23       | smith       |
+| FD344     | 2005-07-13 | 2005-11-03       | smith       |
++-----------+------------+------------------+-------------+
+
+
+3. Display total number of orders placed in each year.
+
+
+CUSTOMERS:
+
+mysql> select year(orderdate) as year ,sum(orderquantity) as order_per_year
+    -> from table_sales
+    -> group by year(orderdate);
+
++------+----------------+
+| year | order_per_year |
++------+----------------+
+| 2005 |             21 |
+| 2002 |              4 |
+| 2004 |              4 |
++------+----------------+
+
+VENDERS:
+
+mysql> select year(orderdate),sum(orderquantity) from table_sales inner join tab
+le_products on table_sales.orderid=table_products.orderid inner join vender_info
+ on table_products.vender_id=vender_info.vender_id group by year(orderdate);
+
++-----------------+--------------------+
+| year(orderdate) | sum(orderquantity) |
++-----------------+--------------------+
+|            2005 |                 34 |
+|            2004 |                  4 |
++-----------------+--------------------+
+
+
+
+4. Display total number of orders placed in each year by vender Wills.
+
+
+
+mysql> select year(orderdate),sum(orderquantity) from table_sales inner join table_products on table_sales.orderid=table_products.orderid inner join vender_info on table_products.vender_id=vender_info.vender_id where vender_name='wills' group by year(orderdate);
+
++-----------------+--------------------+
+| year(orderdate) | sum(orderquantity) |
++-----------------+--------------------+
+|            2005 |                 15 |
++-----------------+--------------------+
+
+
+
+5. Display the name of all those persons who are venders and customers both.
+
+
+mysql> select t.customername from table_sales as t,table_venders as tv where t.customername=tv.venders
+    -> group by t.customername;
+
++--------------+
+| customername |
++--------------+
+| smith        |
+| johnson      |
++--------------+
+
+
+6. Display total number of food items ordered every year.
+
+
+mysql> select year(orderdate) as year , sum(orderquantity) as total_food_orders
+from table_sales as t inner join table_products as p on t.orderid=p.orderid 
+    -> where left(productid,2)='FD'
+    -> group by year(orderdate);
+
++------+-------------------+
+| year | total_food_orders |
++------+-------------------+
+| 2005 |                11 |
+| 2004 |                 4 |
++------+-------------------+
+
+
+
+7. Display total number of food items ordered every year made from bread.
+
+
+
+mysql> select year(orderdate) as year , sum(orderquantity) as total_food_orders
+from table_sales as t inner join table_products as p on t.orderid=p.orderid where left(productid,2)='FD' and raw_material='bread' group by year(orderdate);
+
++------+-------------------+
+| year | total_food_orders |
++------+-------------------+
+| 2005 |                 4 |
++------+-------------------+
+
+
+
+8. Display list of product_id whose vender and customer is different.
+
+
+mysql> select productid,customername,vender_name from table_sales inner join tab
+le_products on table_sales.orderid=table_products.orderid inner join vender_info
+ on table_products.vender_id=vender_info.vender_id where customername <>vender_name;
+
++-----------+--------------+-------------+
+| productid | customername | vender_name |
++-----------+--------------+-------------+
+| CS783     | smith        | wills       |
+| FD123     | johnson      | wills       |
+| AZ145     | johnson      | smith       |
+| GR233     | baldwin      | wills       |
+| FD344     | baldwin      | smith       |
+| CS784     | smith        | wills       |
+| FD267     | wood         | roger       |
+| CS435     | wood         | smith       |
+| GR567     | smith        | wills       |
+| AZ147     | smith        | johnson     |
++-----------+--------------+-------------+
+
+
+9. Display all those customers who are ordering products of milk by smith.
+
+
+mysql> select customername,vender_name,raw_material from table_sales inner join
+table_products on table_sales.orderid=table_products.orderid inner join vender_i
+nfo on table_products.vender_id=vender_info.vender_id where vender_name='smith' and raw_material='milk';
+
++--------------+-------------+--------------+
+| customername | vender_name | raw_material |
++--------------+-------------+--------------+
+| baldwin      | smith       | MILK         |
+| smith        | smith       | MILK         |
++--------------+-------------+--------------+
+
+
+10. Display total number of orders by each vender every year.
+
+
+mysql> select year(orderdate) as year,sum(orderquantity) as order_quantity,vender_name from table_sales inner join table_products on table_sales.orderid=table_products.orderid inner join vender_info on table_products.vender_id=vender_info.vender_id group by year(orderdate),vender_name;
+
++------+----------------+-------------+
+| year | order_quantity | vender_name |
++------+----------------+-------------+
+| 2005 |             15 | wills       |
+| 2005 |             11 | smith       |
+| 2005 |              4 | roger       |
+| 2005 |              4 | johnson     |
+| 2004 |              4 | smith       |
++------+----------------+-------------+
+
+
+
+11. Display name of those venders whose products are sold more than 2000 Rs.Every year.
+
+
+mysql> select vender_name,orderprice*orderquantity,productid from table_sales inner join table_products on table_sales.orderid=table_products.orderid inner jo
+in vender_info on table_products.vender_id=vender_info.vender_id where orderprice*orderquantity>'2000' ;
++-------------+--------------------------+-----------+
+| vender_name | orderprice*orderquantity | productid |
++-------------+--------------------------+-----------+
+| wills       |                     2500 | GR233     |
+| smith       |                     2500 | FD344     |
+| roger       |                     4000 | FD267     |
+| smith       |                     4000 | CS435     |
+| wills       |                     3280 | GR567     |
+| johnson     |                     3280 | AZ147     |
+| smith       |                    20000 | FD333     |
++-------------+--------------------------+-----------+
+

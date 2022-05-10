@@ -1,0 +1,707 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+DBMS - ASSIGNMENT 11
+
+
+
+
+mysql> SET GLOBAL log_bin_trust_function_creators=1;
+    -> DELIMITER ]
+Query OK, 0 rows affected (0.00 sec)
+
+
+Q1). Write an SQL function and stored procedure for average of 3 numbers .
+
+FUNCTION :
+----------
+
+mysql> create function 20BCS065avg3no(a int,b int,c int) returns int
+    -> begin
+    -> declare sum,avg int;
+    -> set sum = a + b + c;
+    -> set avg = sum/3;
+    -> return avg;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+mysql> select 20BCS065avg3no(8,9,10) as Average]
++---------+
+| Average |
++---------+
+|       9 |
++---------+
+
+
+STORED PROCEDURE :
+------------------
+
+mysql> create procedure 20BCS065avg3no(In a int,In b int,In c int,Out t int)
+    -> begin
+    -> declare sum int;
+    -> set sum = a + b + c;
+    -> set t=sum/3;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> call 20BCS065avg3no(8,9,10,@avg)]
+
+mysql> select @avg]
++------+
+| @avg |
++------+
+|    9 |
++------+
+
+
+
+
+Q2). Write an SQL function and stored procedure to calculate factorial .
+
+
+FUNCTION :
+----------
+
+mysql> create function 20BCS065factorial(n int) returns int
+    -> begin
+    -> declare f,i int default 1;
+    -> myloop:loop
+    -> if i > n then
+    -> leave myloop;
+    -> else
+    -> set f = f * i;
+    -> set i = i + 1;
+    -> iterate myloop;
+    -> end if;
+    -> end loop;
+    -> return f;
+    -> end]
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql> select 20BCS065factorial(4) as Factorial]
++-----------+
+| Factorial |
++-----------+
+|        24 |
++-----------+
+
+
+
+STORED PROCEDURE :
+------------------
+
+
+mysql> create procedure 20BCS065factorial(In n int,Out fact int)
+    -> begin
+    -> declare f,i int default 1;
+    -> myloop:loop
+    -> if i > n then
+    -> leave myloop;
+    -> else
+    -> set f = f * i;
+    -> set i = i + 1;
+    -> iterate myloop;
+    -> end if;
+    -> end loop;
+    -> set fact = f;
+    -> end]
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql> select 20BCS065factorial(4)]
++----------------------+
+| 20BCS065factorial(4) |
++----------------------+
+|                   24 |
++----------------------+
+
+
+
+Q3). Write an SQL function and stored procedure to print fibinocci series upto n terms and its sum .
+
+
+
+FUNCTION :
+----------
+
+mysql> create function 20BCS065fibonacci(n int) returns varchar(1000)
+    -> begin
+    -> declare i int default 3;
+    -> declare a, temp int default 0;
+    -> declare b,sum int default 1;
+    -> declare str varchar(1000);
+    -> set str = CAST(a as char(2));
+    -> set str = CONCAT(str," ");
+    -> myloop:loop
+    -> if i > n then
+    -> leave myloop;
+    -> else
+    -> set temp = a + b;
+    -> set a = b;
+    -> set b = temp;
+    -> set i = i+1;
+    -> set sum = sum + temp;
+    -> set str = CONCAT(str, CAST(a as char(2)));
+    -> set str = CONCAT(str," ");
+    -> end if;
+    -> end loop;
+    -> set str = CONCAT(str, CAST(b as char(2)));
+    -> set str = CONCAT(str, " and sum = ");
+    -> set str = CONCAT(str, CAST(sum as char(3)));
+    -> return str;
+    -> end]
+Query OK, 0 rows affected (0.01 sec)
+
+
+
+mysql> select 20BCS065fibonacci(10)]
++-------------------------------------+
+| 20BCS065fibonacci(10)               |
++-------------------------------------+
+| 0 1 1 2 3 5 8 13 21 34 and sum = 88 |
++-------------------------------------+
+
+
+
+
+STORED PROCEDURE :
+------------------
+
+
+mysql> create  procedure 20BCS065sprfibonacci(In n int, Out retStr varchar(1000))
+    -> begin
+    -> declare i int default 3;
+    -> declare a, temp int default 0;
+    -> declare b,sum int default 1;
+    -> declare str varchar(1000);
+    -> set str = CAST(a as char(2));
+    -> set str = CONCAT(str," ");
+    -> myloop:loop
+    -> if i > n then
+    -> leave myloop;
+    -> else
+    -> set temp = a + b;
+    -> set a = b;
+    -> set b = temp;
+    -> set i = i + 1;
+    -> set sum = sum + temp;
+    -> set str = CONCAT(str, CAST(a as char(2)));
+    -> set str = CONCAT(str," ");
+    -> end if;
+    -> end loop;
+    -> set str = CONCAT(str, CAST(b as char(2)));
+    -> set str = CONCAT(str, " and sum = ");
+    -> set str = CONCAT(str, CAST(sum as char(3)));
+    -> set retStr = str;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+mysql> call 20BCS065sprfibonacci(8, @str)]
+
+
+mysql> select @str]
++-------------------------------+
+| @str                          |
++-------------------------------+
+| 0 1 1 2 3 5 8 13 and sum = 33 |
++-------------------------------+
+
+
+
+Q4). Write an SQL function and stored procedure to calculate age .
+
+
+FUNCTION :
+----------
+
+mysql> create function 20BCS065calAge(dat date) returns varchar(25)
+    -> begin
+    -> declare curdate date default CURRENT_DATE();
+    -> declare tempdate date;
+    -> declare year,month,date int default 0;
+    -> declare str varchar(25) default "";
+    -> set year = TIMESTAMPDIFF(YEAR, dat, curdate);
+    -> set month = TIMESTAMPDIFF(MONTH, dat, curdate);
+    -> set month = month -(year * 12);
+    -> set tempdate = DATE_ADD(dat, INTERVAL year YEAR);
+    -> set tempdate = DATE_ADD(tempdate, INTERVAL month MONTH);
+    -> set date = DATEDIFF(curdate, tempdate) + 1;
+    -> set str = CONCAT(str, CAST(year as char(2)));
+    -> set str = CONCAT(str, "Y ");
+    -> set str = CONCAT(str, CAST(month as char(2)));
+    -> set str = CONCAT(str, "M ");
+    -> set str = CONCAT(str, CAST(date as char(2)));
+    -> set str = CONCAT(str, "D ");
+    -> return str;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+mysql> select 20BCS065calAge('2002-04-08')]
++------------------------------+
+| 20BCS065calAge('2002-04-08') |
++------------------------------+
+| 20Y 0M 24D                   |
++------------------------------+
+
+
+
+
+STORED PROCEDURE :
+------------------
+
+
+mysql> create function 20BCS065sprcalAge(In dat date, Out retStr varchar(25))
+    -> begin
+    -> declare curdate date default CURRENT_DATE();
+    -> declare tempdate date;
+    -> declare year,month,date int default 0;
+    -> declare str varchar(25) default "";
+    -> set year = TIMESTAMPDIFF(YEAR, dat, curdate);
+    -> set month = TIMESTAMPDIFF(MONTH, dat, curdate);
+    -> set month = month -(year * 12);
+    -> set tempdate = DATE_ADD(dat, INTERVAL year YEAR);
+    -> set tempdate = DATE_ADD(tempdate, INTERVAL month MONTH);
+    -> set date = DATEDIFF(curdate, tempdate) + 1;
+    -> set str = CONCAT(str, CAST(year as char(2)));
+    -> set str = CONCAT(str, "Y ");
+    -> set str = CONCAT(str, CAST(month as char(2)));
+    -> set str = CONCAT(str, "M ");
+    -> set str = CONCAT(str, CAST(date as char(2)));
+    -> set str = CONCAT(str, "D ");
+    -> set retStr = str;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+mysql> call 20BCS065calAge('2002-04-08', @age)]
+
+
+mysql> select @age]
++-------------+
+| @age        |
++-------------+
+| 20Y 0M 24D  |
++-------------+
+
+
+
+Q5). Write an SQL function and stored procedure to calculate total number of employees in employee table .
+
+
+CREATE TABLE (EMPLOYEE) :
+-------------------------
+
+mysql> CREATE TABLE EMPLOYEE (ENAME VARCHAR(10))]
+
+
+INSERTING VALUES :
+------------------
+
+mysql> INSERT INTO EMPLOYEE VALUES
+    -> ('RAMA'),('KRISHNA'),('PAWAN'),('BAIRIYA')]
+
+
+
+EMPLOYEE TABLE:
+---------------
+
+mysql> SELECT * FROM EMPLOYEE]
++---------+
+| ENAME   |
++---------+
+| RAMA    |
+| KRISHNA |
+| PAWAN   |
+| BAIRIYA |
++---------+
+
+
+FUNCTION :
+----------
+
+
+mysql> create function 20BCS065totalNoEmployees() returns int
+    -> begin
+    -> declare s int;
+    -> select count(*) from EMPLOYEE into s;
+    -> return s;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+mysql> select 20BCS065totalNoEmployees()]
++----------------------------+
+| 20BCS065totalNoEmployees() |
++----------------------------+
+|                          4 |
++----------------------------+
+
+
+
+STORED PROCEDURE :
+------------------
+
+
+mysql> create function 20BCS065sprTotalNoEmployees(Out count int) 
+    -> begin
+    -> declare s int;
+    -> select count(*) from EMPLOYEE into s;
+    -> set count = s;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+mysql> call 20BCS065sprTotalNoEmployees(@res)]
+
+
+mysql> select 20BCS065totalNoEmployees()]
++------+
+| @res |
++------+
+|    4 |
++------+
+
+
+
+
+
+Q6). Write an SQL function and stored procedure to calculate BUDGET OF DEPARTMENT .
+
+
+CREATE TABLE (DEPARTMENT) AND ALTERING TABLE(EMPLOYEE) :
+--------------------------------------------------------
+
+mysql> create table employee
+    -> (eid varchar(10) ,
+    ->  ename varchar(15),
+    -> esal int(7)
+    -> dno  int(2))]
+
+
+mysql> create table department
+    -> (dno int(2),
+    -> dbudget int(5))]
+
+
+INSERTING VALUES :
+------------------
+
+mysql> insert into department values
+    -> ('1','10000'),
+    -> ('2','20000'),
+    -> ('3','30000'),
+    -> ('4','40000')]
+
+
+mysql> insert into employee values
+    -> ('20bc1','rama','200000','1'),
+    -> ('20bc2','krishna','200000','1'),
+    -> ('20bc3','pawan','400000','3'),
+    -> ('20bc4','bariya','500000','4')]
+
+
+Tables:
+--------
+
+>Employee
++-------+---------+--------+------+
+| eid   | ename   | esal   | dno  |
++-------+---------+--------+------+
+| 20bc1 | rama    | 200000 |    1 |
+| 20bc2 | krishna | 200000 |    1 |
+| 20bc3 | pawan   | 400000 |    3 |
+| 20bc4 | bariya  | 500000 |    4 |
++-------+---------+--------+------+
+
+>Department
++------+---------+
+| dno  | dbudget |
++------+---------+
+|    1 |   10000 |
+|    2 |   20000 |
+|    3 |   30000 |
+|    4 |   40000 |
++------+---------+
+
+
+
+
+FUNCTION :
+----------
+
+mysql> create function 20BCS065TcalcBudget(dept varchar(30)) returns int
+    -> begin
+    -> declare deptnumber varchar(5);
+    -> declare budget int default 0;
+    -> select dno from DEPARTMENT where dbudget=10000 into deptnumber;
+    -> select sum(esal) from employee where dno = deptnumber into budget;
+    -> return budget;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+mysql> select 20BCS065TcalcBudget('Accounting')]
++---------------------------------------+
+| 20BCS065totalNoEmployees('Accounting')|
++---------------------------------------+
+|                                400000 |
++---------------------------------------+
+
+
+STORED PROCEDURE :
+------------------
+
+
+mysql> create function 20BCS065sprTcalcBudget(In dept varchar(30), Out budget int)
+    -> begin
+    -> declare deptnumber varchar(5);
+    -> declare sumsal int default 0;
+    -> select dno from DEPARTMENT where dbudget=10000 into deptnumber;
+    -> select sum(esal) from employee where dno = deptnumber into sumsal;
+    -> set budget = sumsal;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+mysql> call 20BCS065sprTcalcBudget('Accounting',@ros)]
+
+
+
+mysql> select @ros]
++--------+
+|  @ros  |
++--------+
+| 400000 |
++--------+
+
+
+
+
+Q7). Write an SQL function and stored procedure to print the following
+        "Hello <name> How are you ".
+
+
+
+FUNCTION :
+----------
+
+mysql> create function 20BCS065printMsg(name varchar(50)) returns varchar(100)
+    -> begin
+    -> declare msg varchar(100) default "Hello ";
+    -> set msg = CONCAT(msg, name);
+    -> set msg = CONCAT(msg, " How are you?");
+    -> return msg;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+mysql> select 20BCS065printMsg('yash')]
++--------------------------+
+| 20BCS065printMsg('yash') |
++--------------------------+
+| Hello yash How are you?  |
++--------------------------+
+
+
+
+
+STORED PROCEDURE :
+------------------
+
+
+mysql> create function 20BCS065sprPrintMsg(In name varchar(50), Out message varchar(100)) 
+    -> begin
+    -> declare msg varchar(100) default "Hello ";
+    -> set msg = CONCAT(msg, name);
+    -> set msg = CONCAT(msg, " How are you?");
+    -> set message = msg;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+mysql> call 20BCS065sprPrintMsg('yash',@message)]
+
+
+
+mysql> select @message]
++--------------------------+
+| @message                 |
++--------------------------+
+| Hello yash How are you?  |
++--------------------------+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+TRIGGERS :
+----------
+
+
+CREATING EMPLOYEE :
+-------------------
+
+mysql> create table employee(
+    -> Eid varchar(5) primary key,
+    -> Ename varchar(50),
+    -> Esal varchar(6))]
+
+
+CREATING LOG TABLE:
+-------------------
+
+mysql> create table LogTable(
+    -> User varchar(50),
+    -> Operation varchar(20),
+    -> Time varchar(20),
+    -> peid varchar(5),
+    -> pename varchar(50),
+    -> pesal varchar(6),
+    -> neid varchar(5),
+    -> nename varchar(50),
+    -> nesal varchar(6))]
+
+
+
+
+INSERT TRIGGER:
+---------------
+
+
+mysql> create trigger insertTrig after insert on Employee for each row
+    -> begin
+    -> insert into LogTable values (user(),'Insert',now(),'-','-','-',new.Eid,new.Ename,new.Esal);
+    -> end]
+
+
+mysql> insert into employee values('E0001','rama krishna','79350'),
+    -> ('E0002','adheera','79351'),
+    -> ('E0003','reena','79352')]
+
+
+mysql> select * from LogTable]
++----------------+-----------+---------------------+------+--------+-------+-------+--------------+-------+
+| User           | Operation | Time                | peid | pename | pesal | neid  | nename       | nesal |
++----------------+-----------+---------------------+------+--------+-------+-------+--------------+-------+
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -    | -      | -     | E0001 | rama krishna | 79350 |
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -    | -      | -     | E0002 | adheera      | 79351 |
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -    | -      | -     | E0003 | reena        | 79352 |
++----------------+-----------+---------------------+------+--------+-------+-------+--------------+-------+
+
+
+
+
+
+UPDATE TRIGGER :
+----------------
+
+mysql> create trigger updateTrig after update on Employee for each row
+    -> begin
+    -> insert into LogTable values (user(),'update',now(),old.Eid,old.Ename,old.Esal,new.Eid,new.Ename,new.Esal);
+    -> end]
+
+
+
+mysql> update Employee set Esal = '100000' where Eid = 'E0001']
+
+
+mysql> select * from LogTable]
++----------------+-----------+---------------------+-------+--------------+-------+-------+--------------+--------+
+| User           | Operation | Time                | peid  | pename       | pesal | neid  | nename       | nesal  |
++----------------+-----------+---------------------+-------+--------------+-------+-------+--------------+--------+
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -     | -            | -     | E0001 | rama krishna | 79350  |
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -     | -            | -     | E0002 | adheera      | 79351  |
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -     | -            | -     | E0003 | reena        | 79352  |
+| root@localhost | update    | 2022-05-01 14:12:30 | E0001 | rama krishna | 79350 | E0001 | rama krishna | 100000 |
++----------------+-----------+---------------------+-------+--------------+-------+-------+--------------+--------+
+
+
+
+
+DELETE TRIGGER :
+----------------
+
+
+mysql> create trigger deleteTrig after delete on Employee for each row
+    -> begin
+    -> insert into LogTable values (user(),'Delete',now(),old.Eid,old.Ename,old.Esal,'-','-','-');
+    -> end]
+
+
+mysql> delete from Employee where Eid = 'E0002']
+
+
+mysql> select * from LogTable]
++----------------+-----------+---------------------+-------+--------------+-------+-------+--------------+--------+
+| User           | Operation | Time                | peid  | pename       | pesal | neid  | nename       | nesal  |
++----------------+-----------+---------------------+-------+--------------+-------+-------+--------------+--------+
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -     | -            | -     | E0001 | rama krishna | 79350  |
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -     | -            | -     | E0002 | adheera      | 79351  |
+| root@localhost | Insert    | 2022-05-01 14:06:05 | -     | -            | -     | E0003 | reena        | 79352  |
+| root@localhost | update    | 2022-05-01 14:12:30 | E0001 | rama krishna | 79350 | E0001 | rama krishna | 100000 |
+| root@localhost | Delete    | 2022-05-01 14:21:31 | E0002 | adheera      | 79351 | -     | -            | -      |
++----------------+-----------+---------------------+-------+--------------+-------+-------+--------------+--------+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
+CURSOR:
+-------
+
+mysql> select * from employee]
++-------+--------------+--------+
+| Eid   | Ename        | Esal   |
++-------+--------------+--------+
+| E0001 | rama krishna | 100000 |
+| E0003 | reena        | 79352  |
++-------+--------------+--------+
+
+
+
+mysql> create procedure mypro(out s varchar(6))
+    -> begin
+    -> declare f int default 1;
+    -> declare str longtext default "";
+    -> declare cur cursor for select Esal from employee;
+    -> declare continue handler for not found set f=0;
+    -> open cur;
+    -> myloop:loop
+    -> fetch cur into s;
+    -> if f=0 then
+    -> leave myloop;
+    -> else
+    -> set str = CONCAT(str," ",s);
+    -> end if;
+    -> end loop;
+    -> close cur;
+    -> select str;
+    -> end]
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+
+mysql> call mypro(@s)]
++---------------+
+| str           |
++---------------+
+|  100000 79352 |
++---------------+
+
+
+
+
+

@@ -1,0 +1,209 @@
+RAVI GOWRI JASWANTH REDDY
+20BCS065
+
+
+
+
+
+
+
+
+mysql> /* First DBMS lab*/
+mysql> create database 20BCS065_lab1;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use 20BCS065_lab1;
+Database changed
+mysql> create table Employee
+    -> (Fname    VARCHAR(20)   NOTNULL,
+    -> dno INT);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'NOTNULL,
+dno INT)' at line 2
+mysql> show tables
+    -> ;
+Empty set (0.00 sec)
+
+mysql> create table employee
+    -> (fname VARCHAR(20) NOT NULL);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> drop table employee;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show tables
+    -> ;
+Empty set (0.00 sec)
+
+mysql> create table employee(
+    -> fname varchar(20) NOT NULL,
+    -> Minit char,
+    -> lname varchar(20) NOT NULL,
+    -> ssn   char(9)     NOT NULL,
+    -> Bdate DATE,       
+    -> address varchar(30),
+    -> sex   char,
+    -> salary decimal(10,2),
+    -> super_ssn char(9),
+    -> Dno   int,
+    -> PRIMARY KEY(ssn) );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> describe employee;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| fname     | varchar(20)   | NO   |     | NULL    |       |
+| Minit     | char(1)       | YES  |     | NULL    |       |
+| lname     | varchar(20)   | NO   |     | NULL    |       |
+| ssn       | char(9)       | NO   | PRI | NULL    |       |
+| Bdate     | date          | YES  |     | NULL    |       |
+| address   | varchar(30)   | YES  |     | NULL    |       |
+| sex       | char(1)       | YES  |     | NULL    |       |
+| salary    | decimal(10,2) | YES  |     | NULL    |       |
+| super_ssn | char(9)       | YES  |     | NULL    |       |
+| Dno       | int           | YES  |     | NULL    |       |
++-----------+---------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> create table department(
+    -> Dname   varchar(20)   NOT NULL,
+    -> Dnumber int           NOT NULL,
+    -> Mgr_ssn char(9)       NOT NULL,
+    -> Mgr_start_date  date,
+    -> PRIMARY KEY(Dnumber),
+    -> UNIQUE(Dname),
+    -> FOREIGN KEY(Mgr_ssn)REFERENCES employee(ssn) );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> describe department;
++----------------+-------------+------+-----+---------+-------+
+| Field          | Type        | Null | Key | Default | Extra |
++----------------+-------------+------+-----+---------+-------+
+| Dname          | varchar(20) | NO   | UNI | NULL    |       |
+| Dnumber        | int         | NO   | PRI | NULL    |       |
+| Mgr_ssn        | char(9)     | NO   | MUL | NULL    |       |
+| Mgr_start_date | date        | YES  |     | NULL    |       |
++----------------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> show tables;
++-------------------------+
+| Tables_in_20bcs065_lab1 |
++-------------------------+
+| department              |
+| employee                |
++-------------------------+
+2 rows in set (0.00 sec)
+
+mysql> /* inserting values in tables */
+mysql> insert into employee values('john','B','wick','123456789','1965-01-09','731 fondren,housten,TX','M','30000','333445555','5'),
+    -> ('franklin','T','wong','333445555','1955-12-08','638 voss,hostan,TX','M','40000','888665555','5'),
+    -> ('alicia','J','zelaya','999887777','1968-01-19','3321 castle,spring,TX','F','25000','987654321','4');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into employee values('jennifer','s','wallace','987654321','1941-06-20','291 berry,bellarie,TX','F','43000','888665555','4'),
+    -> ('ramesh','K','narayan','666884444','1962-09-15','975 fire oak,humble,TX','M','38000','333445555','5'),
+    -> ('joyce','A','english','453453453','1972-07-31','5631 rice,housten,TX','F','25000','333445555','5');
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> insert into employee values('ahmed','H','jabbar','987987987','1969-03-29','980 dallas,houstan,TX','M','25000','987654321','4');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into employee values('james','E','borg','888665555','1937-11-10','450 stone,houstan,TX','M','55000','NULL','1');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select8from employee;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select8from employee' at line 1
+mysql> select*from employee;
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+| fname    | Minit | lname   | ssn       | Bdate      | address                | sex  | salary   | super_ssn | Dno  |
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+| john     | B     | wick    | 123456789 | 1965-01-09 | 731 fondren,housten,TX | M    | 30000.00 | 333445555 |    5 |
+| franklin | T     | wong    | 333445555 | 1955-12-08 | 638 voss,hostan,TX     | M    | 40000.00 | 888665555 |    5 |
+| joyce    | A     | english | 453453453 | 1972-07-31 | 5631 rice,housten,TX   | F    | 25000.00 | 333445555 |    5 |
+| ramesh   | K     | narayan | 666884444 | 1962-09-15 | 975 fire oak,humble,TX | M    | 38000.00 | 333445555 |    5 |
+| james    | E     | borg    | 888665555 | 1937-11-10 | 450 stone,houstan,TX   | M    | 55000.00 | NULL      |    1 |
+| jennifer | s     | wallace | 987654321 | 1941-06-20 | 291 berry,bellarie,TX  | F    | 43000.00 | 888665555 |    4 |
+| ahmed    | H     | jabbar  | 987987987 | 1969-03-29 | 980 dallas,houstan,TX  | M    | 25000.00 | 987654321 |    4 |
+| alicia   | J     | zelaya  | 999887777 | 1968-01-19 | 3321 castle,spring,TX  | F    | 25000.00 | 987654321 |    4 |
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+8 rows in set (0.00 sec)
+
+mysql> insert into department values('research','5','333445555','1988-05-22'),
+    -> ('administration','4','987654321','1995-01-01'),
+    -> ('headquarters','1','888665555','1981-06-19');
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select*from department;
++----------------+---------+-----------+----------------+
+| Dname          | Dnumber | Mgr_ssn   | Mgr_start_date |
++----------------+---------+-----------+----------------+
+| headquarters   |       1 | 888665555 | 1981-06-19     |
+| administration |       4 | 987654321 | 1995-01-01     |
+| research       |       5 | 333445555 | 1988-05-22     |
++----------------+---------+-----------+----------------+
+3 rows in set (0.00 sec)
+
+ QUERY 1:
+----------
+CHANGE THE ADDRESS OF EMPLOYEE(S) WHOSE SPELLING OF HOUSTON IS WRONG;
+
+mysql> update employee
+    -> set address='731 fondren,houston,TX'
+    -> where ssn='123456789';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update employee
+    -> set address='638 voss,houston,TX'
+    -> where ssn='333445555';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select*from employee;
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+| fname    | Minit | lname   | ssn       | Bdate      | address                | sex  | salary   | super_ssn | Dno  |
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+| john     | B     | wick    | 123456789 | 1965-01-09 | 731 fondren,houston,TX | M    | 30000.00 | 333445555 |    5 |
+| franklin | T     | wong    | 333445555 | 1955-12-08 | 638 voss,houston,TX    | M    | 40000.00 | 888665555 |    5 |
+| joyce    | A     | english | 453453453 | 1972-07-31 | 5631 rice,housten,TX   | F    | 25000.00 | 333445555 |    5 |
+| ramesh   | K     | narayan | 666884444 | 1962-09-15 | 975 fire oak,humble,TX | M    | 38000.00 | 333445555 |    5 |
+| james    | E     | borg    | 888665555 | 1937-11-10 | 450 stone,houstan,TX   | M    | 55000.00 | NULL      |    1 |
+| jennifer | s     | wallace | 987654321 | 1941-06-20 | 291 berry,bellarie,TX  | F    | 43000.00 | 888665555 |    4 |
+| ahmed    | H     | jabbar  | 987987987 | 1969-03-29 | 980 dallas,houstan,TX  | M    | 25000.00 | 987654321 |    4 |
+| alicia   | J     | zelaya  | 999887777 | 1968-01-19 | 3321 castle,spring,TX  | F    | 25000.00 | 987654321 |    4 |
++----------+-------+---------+-----------+------------+------------------------+------+----------+-----------+------+
+8 rows in set (0.00 sec)
+
+QUERY 2:
+--------
+RETRIVE BIRTH DATE AND DRESS OF THE EMPLOYEE(S) WHOSE NAME IS 'JOHN B.WICK';
+
+mysql> select Bdate,address
+    -> from employee
+    -> where fname='john'AND Minit='B'AND lname='wick';
++------------+------------------------+
+| Bdate      | address                |
++------------+------------------------+
+| 1965-01-09 | 731 fondren,houston,TX |
++------------+------------------------+
+1 row in set (0.00 sec)
+
+QUERY 3:
+--------
+RETRIVE FIRST AND LAST NAME OF EMPLOYEE(S) WHO ARE FROM HOUSTON,TEXAS;
+
+mysql> SELECT fname,lname
+    -> from employee
+    -> where address like'%houston,TX%';
++----------+-------+
+| fname    | lname |
++----------+-------+
+| john     | wick  |
+| franklin | wong  |
++----------+-------+
+2 rows in set (0.00 sec)
+
